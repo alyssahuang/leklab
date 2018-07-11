@@ -14,6 +14,8 @@
       // instantiates the pie chart, passes in the data and
       // draws it.
 
+      MongoClient.connect('mongodb://127.0.0.1:27017/test1',)
+
       function drawSheetName() {
         //var queryString = encodeURIComponent('SELECT D, E, F, G, H, I, J');
         var queryString = encodeURIComponent('SELECT C, F, G , H, I ORDER BY A');
@@ -68,12 +70,12 @@
           }
         };
         //columnchart
-        // var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
-        // chart.draw(data, col_options);
+        var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+        chart.draw(data, col_options);
 
         //linechart
-        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-        chart.draw(data, curve_options);
+        var chart1 = new google.visualization.LineChart(document.getElementById('curve_chart'));
+        chart1.draw(data, curve_options);
       }
 
       //   // Hardcoding chart

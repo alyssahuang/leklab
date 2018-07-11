@@ -1,0 +1,112 @@
+{% extends 'analysispage.html' %}
+
+{% block title %}Individual &#187; <span>{{ individual }}</span>{% endblock %}
+
+{% block links %}
+    Project: <a href="{% url 'project_home' project.project_id %}">{{ project }}</a>
+{% endblock %}
+
+{% block desc %}
+{% endblock %}
+
+{% block innercontent %}
+    <div class="container">
+        <h4>About this Individual</h4>
+        <dl class="dl-horizontal">
+            <dt>Individual ID</dt>
+            <dd>{{ individual.indiv_id }}</dd>
+            <dt>Nickname</dt>
+            <dd>{% if individual.nickname %}{{ individual.nickname }}{% else %}.{% endif %}</dd>
+        </dl>
+        <div class="analysis-options-box">
+            <h6 class="section-header">Analysis</h6>
+            {% if individual.has_coverage_data %}
+            <div class="analysis-box">
+                <a href="" class="big-link-text">Exome Coverage</a>
+                <p>See which parts of the exome could be analyzed, and which may require further sequencing.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <!--ah2264-->
+    <div id="chart_div"></div>
+    <!---->
+{% endblock %}
+
+{% comment ah2264%} {% endcomment %}
+{% block extrahead %}
+    {% comment %} {{ block.super }} {% endcomment %}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+    
+        function drawChart() {
+
+
+        url = '/api/alyssa';
+
+        var xhr = $.ajax({
+                url: url,
+                type: 'POST',
+                //data: post_data,
+                success: function(data){
+                    /*
+                    if (data.is_error) {
+                        alert(data.error);
+                        that.showResults();
+
+                    } else {
+                        that.setResults(data.search_hash, search_spec, data.variants);
+                        that.navigate('search/'+data.search_hash+'/results');
+                    }
+                   */
+                  //var data = new google.visualization.DataTable(data.jsonData);
+                  //console.log(data);
+                  var data = new google.visualization.DataTable(data);
+                  var curve_options = {
+                          height: 600,
+                          width: 1300,
+//                          curveType: 'function',
+                          series: {
+                                  0: {type: 'line', curveType: 'function', targetAxisIndex: 0, labelInLegend: "dbsnp ins del ratio"},
+                                  1: {type: 'bars', color: '#B5D3E7',  targetAxisIndex: 1, labelInLegend: "singletons"},
+                                  //2: {targetAxisIndex: 0},
+                                  //3: {targetAxisIndex: 1}
+                          },
+                          vAxes: {
+                                  0: {title: 'dbsnp ins del ratio'},
+                                  1: {title: 'singletons'}
+                          },
+//                          legend: {
+//                                  position: 'top', 
+//                                  textStyle: {color: 'black', fontSize: 16}
+//                          },
+                          hAxis: {
+                                  //slantedText: false if you want full, layered horizontal x-axis labels
+                                  slantedText: true,
+                                  slantedTextAngle: 45
+                          }
+                  };
+                  var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+                  chart.draw(data, curve_options);
+                }
+        });
+        /*      
+          var jsonData = {
+           "cols":[
+              {"type":"datetime"},{"type":"number"}
+            ],
+           "rows":[
+             {"c":[{"v":"Date(2015, 3)"},{"v":10}]}
+           ]
+          };
+
+          var data = new google.visualization.DataTable(jsonData);
+          var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+          chart.draw(data, {height: 600});
+        */  
+        }
+    </script>
+{% endblock %}
