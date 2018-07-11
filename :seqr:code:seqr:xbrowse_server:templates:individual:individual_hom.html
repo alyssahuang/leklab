@@ -29,7 +29,10 @@
         </div>
     </div>
     <!--ah2264-->
-    <div id="chart_div"></div>
+    <div id="dashboard_div">
+        <div id="filter_div"></div>
+        <div id="chart_div"></div>
+    </div>
     <!---->
 {% endblock %}
 
@@ -39,10 +42,10 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script type="text/javascript">
-        google.charts.load('current', {'packages':['corechart']});
-        google.charts.setOnLoadCallback(drawChart);
+        google.charts.load('current', {'packages':['corechart', 'controls']});
+        google.charts.setOnLoadCallback(drawDashboard);
     
-        function drawChart() {
+        function drawDashboard() {
 
 
         url = '/api/alyssa';
@@ -50,63 +53,36 @@
         var xhr = $.ajax({
                 url: url,
                 type: 'POST',
-                //data: post_data,
                 success: function(data){
-                    /*
-                    if (data.is_error) {
-                        alert(data.error);
-                        that.showResults();
-
-                    } else {
-                        that.setResults(data.search_hash, search_spec, data.variants);
-                        that.navigate('search/'+data.search_hash+'/results');
-                    }
-                   */
-                  //var data = new google.visualization.DataTable(data.jsonData);
-                  //console.log(data);
                   var data = new google.visualization.DataTable(data);
-                  var curve_options = {
-                          height: 600,
-                          width: 1300,
-//                          curveType: 'function',
-                          series: {
-                                  0: {type: 'line', curveType: 'function', targetAxisIndex: 0, labelInLegend: "dbsnp ins del ratio"},
-                                  1: {type: 'bars', color: '#B5D3E7',  targetAxisIndex: 1, labelInLegend: "singletons"},
-                                  //2: {targetAxisIndex: 0},
-                                  //3: {targetAxisIndex: 1}
-                          },
-                          vAxes: {
-                                  0: {title: 'dbsnp ins del ratio'},
-                                  1: {title: 'singletons'}
-                          },
-//                          legend: {
-//                                  position: 'top', 
-//                                  textStyle: {color: 'black', fontSize: 16}
-//                          },
-                          hAxis: {
-                                  //slantedText: false if you want full, layered horizontal x-axis labels
-                                  slantedText: true,
-                                  slantedTextAngle: 45
+                  var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div'));
+                  var dropDown = new google.visualization.ControlWrapper({
+                          'controlType': 'CategoryFilter',
+                          'containerId': 'filter_div',
+                          'options': {
+                                  'filterColumnIndex': 1 
                           }
-                  };
-                  var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
-                  chart.draw(data, curve_options);
+                  }); 
+                  var chart1 = new google.visualization.ChartWrapper({
+                          'chartType': 'ComboChart',
+                          'containerId': 'chart_div',
+                          'options': {
+                                  'height': 600,
+                                  'width': 1300,
+                                  'series': {
+                                          0: {'type': 'line', 'curveType': 'function', 'targetAxisIndex': 0, 'labelInLegend': "dbsnp ins del ratio"},
+                                          1: {'type': 'bars', 'color': '#B5D3E7',  'targetAxisIndex': 1, 'labelInLegend': "singletons"},
+                                  },
+                                  'vAxes': {
+                                          0: {'title': 'dbsnp ins del ratio'},
+                                          1: {'title': 'singletons'}
+                                  },
+                          }
+                  }); 
+                  dashboard.bind(dropDown, chart1);
+                  dashboard.draw(data);
                 }
         });
-        /*      
-          var jsonData = {
-           "cols":[
-              {"type":"datetime"},{"type":"number"}
-            ],
-           "rows":[
-             {"c":[{"v":"Date(2015, 3)"},{"v":10}]}
-           ]
-          };
-
-          var data = new google.visualization.DataTable(jsonData);
-          var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
-          chart.draw(data, {height: 600});
-        */  
         }
     </script>
 {% endblock %}
