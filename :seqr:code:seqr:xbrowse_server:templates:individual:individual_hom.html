@@ -54,19 +54,21 @@
                 url: url,
                 type: 'POST',
                 success: function(data){
+                  console.log(data);
                   var data = new google.visualization.DataTable(data);
                   var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div'));
                   var dropDown = new google.visualization.ControlWrapper({
                           controlType: 'CategoryFilter',
                           containerId: 'filter_div',
                           options: {
-                                  filterColumnIndex: 0 
+                                  filterColumnIndex: 3 
                           }
                   }); 
                   var chart1 = new google.visualization.ChartWrapper({
                           chartType: 'ComboChart',
                           containerId: 'chart_div',
                           options: {
+                                  //view: {columns: [0, 1, 2]},
                                   height: 600,
                                   width: 1300,
                                   series: {
@@ -89,7 +91,8 @@
                                           slantedTextAngle: 45
                                   }
                           }
-                  }); 
+                  });
+                  chart1.setView({'columns': [0, 1, 2]}); 
                   dashboard.bind(dropDown, chart1);
                   dashboard.draw(data);
                 }
