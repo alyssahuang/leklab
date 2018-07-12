@@ -33,84 +33,124 @@
         <div id="filter_div"></div>
         <div id="chart_div"></div>
     </div>
+    <div id="chart_all_div"></div>
     <!---->
 {% endblock %}
 
 {% comment ah2264%} {% endcomment %}
 {% block extrahead %}
     {% comment %} {{ block.super }} {% endcomment %}
+{% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/additional.css' %}">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script type="text/javascript">
         google.charts.load('current', {'packages':['corechart', 'controls']});
         google.charts.setOnLoadCallback(drawDashboard);
-    
-        function drawDashboard() {
-
+        google.charts.setOnLoadCallback(drawChartAll);
 
         url = '/api/alyssa';
+        function drawDashboard() {
+        
+                //url = '/api/alyssa';
+        
+                var xhr = $.ajax({
+                        url: url,
+                        type: 'POST',
+                        success: function(data){
+                          //console.log(data);
+                          var data = new google.visualization.DataTable(data);
+                          var view = new google.visualization.DataView(data);
+        //                  view.setColumns([0, 1, 2, 3,
+        //                        {
+        //                                calc: function (dt, row) {
+        //                                        if ((dt.getValue(row, 3) === "Kangsoo")) {
+        //                                                console.log('Kangsoo matched');
+        //                                                //return 'red';
+        //                                        }
+        //                                        console.log(dt.getValue(row,3));
+        //                                },
+        //                                type: 'string',
+        //                                role: 'style',
+        //                        },
+        //                  ]);              
+                          var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div'));
+                          var dropDown = new google.visualization.ControlWrapper({
+                                  controlType: 'CategoryFilter',
+                                  containerId: 'filter_div',
+                                  options: {
+                                          //column 3 is "company" 
+                                          filterColumnIndex: 3 
+                                  }
+                          }); 
+                          var chart1 = new google.visualization.ChartWrapper({
+                                  chartType: 'ComboChart',
+                                  containerId: 'chart_div',
+                                  options: {
+                                          //view: {columns: [0, 1, 2]},
+                                          height: 600,
+                                          width: 1300,
+                                          series: {
+                                                  0: {type: 'line',
+                                                      color: '#024579', 
+                                                      curveType: 'function', 
+                                                      targetAxisIndex: 0, 
+                                                      labelInLegend: "dbsnp ins del ratio"},
+                                                  1: {type: 'bars', 
+                                                      color: '#6B92B1',  
+                                                      targetAxisIndex: 1, 
+                                                      labelInLegend: "singletons"},
+                                          },
+                                          vAxes: {
+                                                  0: {title: 'dbsnp ins del ratio'},
+                                                  1: {title: 'singletons'}
+                                          },
+                                          hAxis: {
+                                                  //slantedText: false if you want full, layered horizontal x-axis labels
+                                                  slantedText: true,
+                                                  slantedTextAngle: 45
+                                          }
+                                  }
+                          });
+                          chart1.setView({'columns': [0, 1, 2]}); 
+                          dashboard.bind(dropDown, chart1);
+                          dashboard.draw(view);
+                        }
+                });
+        }
 
-        var xhr = $.ajax({
-                url: url,
-                type: 'POST',
-                success: function(data){
-                  //console.log(data);
-                  var data = new google.visualization.DataTable(data);
-                  var view = new google.visualization.DataView(data);
-                  view.setColumns([0, 1, 2, 3,
-                        {
-                                calc: function (dt, row) {
-                                        if ((dt.getValue(row, 3) === "Kangsoo")) {
-                                                console.log('Kangsoo matched');
-                                                //return 'red';
-                                        }
-                                        console.log(dt.getValue(row,3));
-                                },
-                                type: 'string',
-                                role: 'style',
-                        },
-                  ]);
-                  var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div'));
-                  var dropDown = new google.visualization.ControlWrapper({
-                          controlType: 'CategoryFilter',
-                          containerId: 'filter_div',
-                          options: {
-                                  filterColumnIndex: 3 
-                          }
-                  }); 
-                  var chart1 = new google.visualization.ChartWrapper({
-                          chartType: 'ComboChart',
-                          containerId: 'chart_div',
-                          options: {
-                                  //view: {columns: [0, 1, 2]},
+        function drawChartAll() {
+        
+                var xhr = $.ajax({
+                        url: url,
+                        type: 'POST',
+                        success: function(data){
+                          var data = new google.visualization.DataTable(data);
+                          var view = new google.visualization.DataView(data);
+                          view.setColumns([0,1,2,4,5]);
+                          var curve_options = {
                                   height: 600,
                                   width: 1300,
                                   series: {
-                                          0: {type: 'line', 
-                                              curveType: 'function', 
-                                              targetAxisIndex: 0, 
-                                              labelInLegend: "dbsnp ins del ratio"},
-                                          1: {type: 'bars', 
-                                              color: '#B5D3E7',  
-                                              targetAxisIndex: 1, 
-                                              labelInLegend: "singletons"},
+                                          0: {type: 'line', color: '#C78912', curveType: 'function', targetAxisIndex: 0, labelInLegend: "dbsnp ins del ratio"},
+                                          1: {type: 'bars', color: '#DEBA75', targetAxisIndex: 1, labelInLegend: "singletons"},
+                                          2: {type: 'line', curveType: 'function', targetAxisIndex: 1, labelInLegend: "mean target coverage"},
+                                          3: {type: 'line', curveType: 'fucntion', targetAxisIndex: 1, labelInLegend: "median target coverage"}, 
+
                                   },
                                   vAxes: {
                                           0: {title: 'dbsnp ins del ratio'},
-                                          1: {title: 'singletons'}
+                                          1: {title: 'singletons, mean, median'}
                                   },
                                   hAxis: {
-                                          //slantedText: false if you want full, layered horizontal x-axis labels
                                           slantedText: true,
                                           slantedTextAngle: 45
                                   }
-                          }
-                  });
-                  chart1.setView({'columns': [0, 1, 2]}); 
-                  dashboard.bind(dropDown, chart1);
-                  dashboard.draw(view);
-                }
-        });
+                          };
+                          var chart = new google.visualization.ComboChart(document.getElementById('chart_all_div'));
+                          chart.draw(view, curve_options);
+                        }
+                });
         }
     </script>
 {% endblock %}
