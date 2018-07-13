@@ -67,14 +67,14 @@
                                   containerId: 'filter_div',
                                   options: {
                                           //column 3 is "company" 
-                                          filterColumnIndex: 3 
+                                          filterColumnIndex: 1 
                                   }
                           }); 
                           var chart1 = new google.visualization.ChartWrapper({
                                   chartType: 'ComboChart',
                                   containerId: 'chart_div',
                                   options: {
-                                          //view: {columns: [0, 1, 2]},
+                                          //view: {columns: [0, 2, 3]},
                                           height: 600,
                                           width: 1300,
                                           series: {
@@ -99,50 +99,110 @@
                                           }
                                   }
                           });
-                          chart1.setView({'columns': [0, 1, 2]}); 
+                          chart1.setView({'columns': [0, 2, 3]}); 
                           dashboard.bind(dropDown, chart1);
                           dashboard.draw(view);
                         }
                 });
         }
 
-        function drawChartAll() {
+        //hardcoded column categories, convert later
+        var columns1 = [
+                {type: 'string'}, 
+                {type: 'string', visible: false}, 
+                {type: 'number', color: 'blue', disabledColor: 'grey', visible: true}, 
+                {type: 'number', color: 'green', disabledColor: 'grey', visible: true}, 
+                {type: 'number', color: 'purple', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'pink', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'brown', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'red', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'blue', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'yellow', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'purple', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'black', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'orange', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'green', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'red', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'black', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'pink', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'orange', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'brown', disabledColor: 'grey', visible: false},
+        ];
+        var nullFunc = function() {return null;};
         
+        function drawChartAll() {
+        var chart, chartData, view;
                 var xhr = $.ajax({
                         url: url,
                         type: 'POST',
                         success: function(data){
-                          var data = new google.visualization.DataTable(data);
-                          var chartWrap = new google.visualization.ChartWrapper({
-                                chartType: 'ComboChart',
-                                containerId: 'chart_all_div',
-                                dataTable: data,
-                                options: {
-                                        height: 600,
-                                        width: 1300,
-                                        series: {
-                                                0: {type: 'line', color: '#C78912', curveType: 'function', targetAxisIndex: 0, labelInLegend: "dbsnp ins del ratio"},
-                                                1: {type: 'bars', color: '#DEBA75', targetAxisIndex: 1, labelInLegend: "singletons"},
-                                                2: {type: 'line', curveType: 'function', targetAxisIndex: 1, labelInLegend: "mean target coverage"},
-                                                3: {type: 'line', curveType: 'fucntion', targetAxisIndex: 1, labelInLegend: "median target coverage"}, 
-
-                                        },
-                                        vAxes: {
-                                                0: {title: 'dbsnp ins del ratio'},
-                                                1: {title: 'singletons, mean, median'}
-                                        },
-                                        hAxis: {
-                                                slantedText: true,
-                                                slantedTextAngle: 45
-                                        }
+                          if (!chart) {
+                          chartData = new google.visualization.DataTable(data);
+                          view = new google.visualization.DataView(chartData);
+//                          view.setColumns([0,1,2,4,5]);
+                          chart = new google.visualization.ComboChart(document.getElementById('chart_all_div'));
+                          google.visualization.events.addListener(chart, 'click', function(target) {
+                                if (target.targetID.match(/^legendentry#\d+$/)) {
+                                        var index = parseInt(target.targetID.slice(12))+2;
+                                        columns1[index].visible = !columns1[index].visible;
+                                        drawChartAll();
                                 }
                           });
-//                          var view = new google.visualization.DataView(data);
-//                          view.setColumns([0,1,2,4,5]);
-                          chartWrap.setView({'columns': [0, 1, 2, 4, 5]});
-                          chartWrap.draw();
+                          }
+                          var visibleColumnIndices = [0];
+                          var colors = [];
+                          for (var i = 1; i < columns1.length; i++) {
+                            //index 1 is the company column
+                            if (i != 1) {
+                                if (columns1[i].visible) {
+                                        colors.push(columns1[i].color);
+                                        visibleColumnIndices.push(i);
+                                }
+                                else {
+                                        colors.push(columns1[i].disabledColor);
+                                        visibleColumnIndices.push({
+                                                calc: nullFunc,
+                                                type: columns1[i].type,
+                                        });
+                                }
+                            }
+                          };
+                          view.setColumns(visibleColumnIndices);
+                          var curve_options = {
+                                  height: 800,
+                                  width: 1300,
+                                  series: {
+                                          0: {type: 'line', color: '#C78912', curveType: 'function', targetAxisIndex: 0, labelInLegend: "dbsnp ins del ratio"},
+                                          1: {type: 'bars', color: '#DEBA75', targetAxisIndex: 1, labelInLegend: "singletons"},
+                                          2: {type: 'line', color: 'black', curveType: 'function', targetAxisIndex: 1, labelInLegend: "mean target coverage"},
+                                          3: {type: 'line', color: 'red', curveType: 'function', targetAxisIndex: 1, labelInLegend: "median target coverage"}, 
+                                          4: {type: 'line', color: 'purple', curveType: 'function', targetAxisIndex: 1, labelInLegend: "pct_target_bases_10x"},
+                                          5: {type: 'line', color: 'pink', curveType: 'function', targetAxisIndex: 1, labelInLegend: "pct_target_bases_20x"},
+                                          6: {type: 'line', color: 'green', curveType: 'function', targetAxisIndex: 1, labelInLegend: "pct_target_bases_30x"},
+                                          7: {type: 'line', color: 'grey', curveType: 'fucntion', targetAxisIndex: 1, labelInLegend: "pct_chimeras"}, 
+                                          8: {type: 'line', color: 'yellow', curveType: 'function', targetAxisIndex: 1, labelInLegend: "contamination"},
+                                          9: {type: 'line', color: 'orange', curveType: 'function', targetAxisIndex: 1, labelInLegend: "het_homvar_ratio"},
+                                          10: {type: 'line', color: 'brown', curveType: 'function', targetAxisIndex: 1, labelInLegend: "total_snps"},
+                                          11: {type: 'line', color: 'blue', curveType: 'fucntion', targetAxisIndex: 1, labelInLegend: "pct_dbsnp"}, 
+                                          12: {type: 'line', color: 'black', curveType: 'function', targetAxisIndex: 1, labelInLegend: "dbsnp_titv"},
+                                          13: {type: 'line', color: 'black', curveType: 'function', targetAxisIndex: 1, labelInLegend: "novel_titv"},
+                                          14: {type: 'line', color: 'black', curveType: 'function', targetAxisIndex: 1, labelInLegend: "total_indels"},
+                                          15: {type: 'line', color: 'black', curveType: 'fucntion', targetAxisIndex: 1, labelInLegend: "pct_dbsnp_indels"},  
+                                          16: {type: 'line', color: 'black', curveType: 'function', targetAxisIndex: 1, labelInLegend: "novel_ins_del_ratio"},
+                                  },
+                                  vAxes: {
+                                          0: {title: 'dbsnp ins del ratio'},
+                                          1: {title: 'singletons, mean, median'}
+                                  },
+                                  hAxis: {
+                                          slantedText: true,
+                                          slantedTextAngle: 45
+                                  }
+                          };
+                          chart.draw(view, curve_options);
                         }
                 });
         }
+
     </script>
 {% endblock %}
