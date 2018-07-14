@@ -34,11 +34,11 @@
         <div id="chart_div"></div>
     </div>
     <div id="chart_all_div"></div>
-    <div id="collab1">
-        <div id="filter1div"></div>
-        <div id="chart1_div"></div>
-    </div>
     <!--
+    <div id="dashboard_div1">
+        <div id="filter_div1"></div>
+        <div id="collab1"></div>
+    </div>
     <div id="collab2">
         <div id="filter2div"></div>
         <div id="chart2_div"></div>
@@ -61,8 +61,8 @@
     </div>
     -->
     <div id="collab1"></div>
-    <!--
     <div id="collab2"></div>
+    <!--
     <div id="collab3"></div>
     <div id="collab4"></div>
     <div id="collab5"></div>
@@ -245,8 +245,8 @@
                         }
                 });
         }
-        
-        function drawCollab3() {
+        //think this is working... old version of drawCollab1 without toggling 
+        function drawCollab1_1() {
                 var xhr = $.ajax({
                         url: url,
                         type: 'POST',
@@ -295,18 +295,33 @@
                 });
         }
 
-
+        //tag:1 attempt to integrate dropdown and toggling... renders with no erros, but toggling doesn't work... probably something to do with position of addListener
+/*
+        //hardcoded column categories, convert later
         var columns1 = [
-                {type: 'number', color: 'blue', disabledColor: 'grey', visible: true}, 
-                {type: 'number', color: 'green', disabledColor: 'grey', visible: true}, 
+                {type: 'string', visible: false}, 
+                {type: 'string', visible: false}, 
+                {type: 'number', color: 'green', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'green', disabledColor: 'grey', visible: false}, 
                 {type: 'number', color: 'purple', disabledColor: 'grey', visible: true}, 
                 {type: 'number', color: 'pink', disabledColor: 'grey', visible: true}, 
-                {type: 'number', color: 'brown', disabledColor: 'grey', visible: true}, 
+                {type: 'number', color: 'brown', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'red', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'blue', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'yellow', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'purple', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'black', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'orange', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'green', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'red', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'black', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'pink', disabledColor: 'grey', visible: false}, 
+                {type: 'number', color: 'orange', disabledColor: 'grey', visible: false}, 
         ];
         var nullFunc = function() {return null;};
         
-        function drawCollab2() {
-        var chart, chartData, view;
+        function drawCollab1() {
+        var chart, chartData, view, dashboard, dropDown;
                 var xhr = $.ajax({
                         url: url,
                         type: 'POST',
@@ -314,43 +329,40 @@
                           if (!chart) {
                           chartData = new google.visualization.DataTable(data);
                           view = new google.visualization.DataView(chartData);
-                          chart = new google.visualization.ComboChart(document.getElementById('collab1'));
-                          google.visualization.events.addListener(chart, 'click', function(target) {
-                                if (target.targetID.match(/^legendentry#\d+$/)) {
-                                        var index = parseInt(target.targetID.slice(12))+2;
-                                        columns1[index].visible = !columns1[index].visible;
-                                        drawCollab1();
+//                          view.setColumns([0,1,2,4,5]);
+                          dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div1'));
+                          dropDown = new google.visualization.ControlWrapper({
+                                controlType: 'CategoryFilter',
+                                containerId: 'filter_div1',
+                                options: {
+                                        filterColumnIndex: 1
                                 }
                           });
-                          }
-                          var visibleColumnIndices = [0];
-                          var colors = [];
-                          var ind = [4, 5, 6, 7, 8];
-                          for (var i in ind) {
-                            //index 1 is the company column
-
-                                  if (columns1[i].visible) {
-//                                          colors.push(columns1[i].color);
-                                          visibleColumnIndices.push(ind[i]);
-//                                          colors.push(columns1[i].disabledColor);
-                                          visibleColumnIndices.push({
-                                                  calc: nullFunc,
-                                                  type: columns1[i].type,
-                                          });
-
-                                  }
-                          };
-                          view.setColumns(visibleColumnIndices);
-                          var curve_options = {
-                                          height: 600,
+                          chart = new google.visualization.ChartWrapper({
+                                  chartType: 'ComboChart',
+                                  containerId: 'collab1',
+                                  options: {
+                                          height: 800,
                                           width: 1500,
                                           series: {
-                                          0: {type: 'line', color: '#DAB061', targetAxisIndex: 0, labelInLegend: "mean target coverage"},
-                                          1: {type: 'line', color: '#C78912', targetAxisIndex: 0, labelInLegend: "median target coverage"},
-                                          2: {type: 'line', color: '#96B1C7', targetAxisIndex: 1, labelInLegend: "pct target bases 10x"},
-                                          3: {type: 'line', color: '#41749B', targetAxisIndex: 1, labelInLegend: "pct target bases 20x"},
-                                          4: {type: 'line', color: '#024579', targetAxisIndex: 1, labelInLegend: "pct target bases 30x"},
+                                                  0: {type: 'line', color: '#C78912', curveType: 'function', targetAxisIndex: 0, visibleInLegend: false},//labelInLegend: "dbsnp ins del ratio"},
+                                                  1: {type: 'bars', color: '#024579', targetAxisIndex: 1, visibleInLegend: false},//labelInLegend: "singletons"},
+                                                  2: {type: 'line', color: '#DAB061', curveType: 'function', targetAxisIndex: 0, labelInLegend: "mean target coverage"},
+                                                  3: {type: 'line', color: '#C78912', curveType: 'function', targetAxisIndex: 0, labelInLegend: "median target coverage"}, 
+                                                  4: {type: 'line', color: '#96B1C7', curveType: 'function', targetAxisIndex: 1, labelInLegend: "pct target bases 10x"},
+                                                  5: {type: 'line', color: '#41749B', curveType: 'function', targetAxisIndex: 1, labelInLegend: "pct target bases 20x"},
+                                                  6: {type: 'line', color: '#024579', curveType: 'function', targetAxisIndex: 1, labelInLegend: "pct target bases 30x"},
+                                                  7: {type: 'line', color: '#2E8B57', curveType: 'function', targetAxisIndex: 1, visibleInLegend: false},//labelInLegend: "pct_chimeras"}, //2
+                                                  8: {type: 'line', color: '#ED2939', curveType: 'function', targetAxisIndex: 1, visibleInLegend: false},//labelInLegend: "contamination"},//2
+                                                  9: {type: 'line', color: '#90A4E8', curveType: 'function', targetAxisIndex: 1, visibleInLegend: false},//labelInLegend: "het_homvar_ratio"},//3
+                                                  10: {type: 'line', color: '#ECB4A5', curveType: 'function', targetAxisIndex: 0, visibleInLegend: false},//labelInLegend: "total_snps"},//change to 1000s
+                                                  11: {type: 'line', color: '#F6D5D0', curveType: 'function', targetAxisIndex: 1, visibleInLegend: false},//labelInLegend: "pct_dbsnp"}, 
+                                                  12: {type: 'line', color: '#81A2BC', curveType: 'function', targetAxisIndex: 1, visibleInLegend: false},//labelInLegend: "dbsnp_titv"},//3
+                                                  13: {type: 'line', color: '#ABC1D2', curveType: 'function', targetAxisIndex: 1, visibleInLegend: false},//labelInLegend: "novel_titv"},//3
+                                                  14: {type: 'line', color: '#D09D3A', curveType: 'function', targetAxisIndex: 0, visibleInLegend: false},//labelInLegend: "total_indels"},
+                                                  15: {type: 'line', color: '#DAB061', curveType: 'function', targetAxisIndex: 1, visibleInLegend: false},//labelInLegend: "pct_dbsnp_indels"},  
                                           },
+                                          legend: {position: 'top', maxLines: '2'},
                                           vAxes: {
                                                   0: {title: 'target coverage'},
                                                   1: {title: 'pct target bases'}
@@ -360,12 +372,46 @@
                                                   slantedTextAngle: 45
                                           },
                                           pointsVisible: true,
-                                          legend: {position: 'top', maxLines: '2'},
+
+                                  }
+                          });
+                          google.visualization.events.addListener(chart, 'click', function(target) {
+                                if (target.targetID.match(/^legendentry#\d+$/)) {
+                                        var index = parseInt(target.targetID.slice(12))+2;
+                                        console.log(index);
+                                        columns1[index].visible = !columns1[index].visible;
+                                        drawCollab1();
+                                }
+                          });
+                          }
+                          var visibleColumnIndices = [0];
+                          var colors = [];
+                          for (var i = 2; i < columns1.length; i++) {
+                            //index 1 is the company column
+                            if (i != 1) {
+                                if (columns1[i].visible) {
+                                        colors.push(columns1[i].color);
+                                        visibleColumnIndices.push(i);
+                                }
+                                else {
+                                        colors.push(columns1[i].disabledColor);
+                                        visibleColumnIndices.push({
+                                                calc: nullFunc,
+                                                type: columns1[i].type,
+                                        });
+                                }
+                            }
+                            console.log(visibleColumnIndices);
                           };
-                          chart.draw(view, curve_options);
+                          chart.setView({'columns': visibleColumnIndices});
+                          //view.setColumns(visibleColumnIndices);
+                          dashboard.bind(dropDown, chart);
+                          dashboard.draw(view);
+                          //chart.draw(view, curve_options);
                         }
                 });
         }
+*/
         //hardcoded column categories, convert later
         var columns1 = [
                 {type: 'string', visible: false}, 
@@ -431,7 +477,7 @@
                           view.setColumns(visibleColumnIndices);
                           var curve_options = {
                                   height: 800,
-                                  width: 1500,
+                                  width: 1670,
                                   series: {
                                           0: {type: 'line', color: '#C78912', curveType: 'function', targetAxisIndex: 0, visibleInLegend: false},//labelInLegend: "dbsnp ins del ratio"},
                                           1: {type: 'bars', color: '#024579', targetAxisIndex: 1, visibleInLegend: false},//labelInLegend: "singletons"},
