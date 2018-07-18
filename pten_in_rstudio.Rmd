@@ -207,11 +207,13 @@ plot(tpmt_pos)
 ```
 
 ```{r}
-
+#TPMT
 tpmt_sum <- summarySE(tpmt1_proc_wt, measurevar="score", groupvars="position")
-head(tpmt_sum)
-tpmt_pos_mean <- ggplot(tpmt_sum, aes(x=factor(position), y=score))+ geom_bar(position=position_dodge(), stat="identity", colour="#999999") + geom_errorbar(aes(ymin=score-sd, ymax = score+sd), width=0.001, position=position_dodge()) +ylab("VAMP-seq score")+theme(axis.title.x = element_blank(), axis.text.x = element_blank()) + scale_x_discrete(breaks = seq(0, 250, 10))
-tpmt_heat <- ggplot(tpmt1_proc_wt, aes(factor(position), end)) + geom_tile(aes(fill=score)) + scale_fill_gradientn(colours = c("#3F7CB9", "#FFEAF3", "#B21F4E"), values = scales::rescale(c(-0.7, 0.2, 1, 1.3, 2.03)))+ scale_x_discrete(breaks = seq(0, 250, 10)) + theme(legend.position='bottom')+xlab("Position in TPMT")
+#head(tpmt_sum)
+tpmt_pos_mean <- ggplot(tpmt_sum, aes(x=position, y=score))+ geom_bar(position=position_dodge(), stat="identity", colour="#999999") + geom_errorbar(aes(ymin=score-sd, ymax = score+sd), width=1, size=0.3, position=position_dodge()) +ylab("VAMP-seq score")+theme(axis.title.x = element_blank(), axis.text.x = element_blank()) + scale_x_continuous(breaks = seq(0, 245, 10), expand = c(0,0)) + scale_y_continuous(expand = c(0,0))
+#factor(position) is getting rid of some positions altogether on the graph
+#tpmt_pos_mean <- ggplot(tpmt_sum, aes(x=factor(position), y=score))+ geom_bar(position=position_dodge(), stat="identity", colour="#999999") + geom_errorbar(aes(ymin=score-sd, ymax = score+sd), width=0.001, position=position_dodge()) +ylab("VAMP-seq score")+theme(axis.title.x = element_blank(), axis.text.x = element_blank()) + scale_x_discrete(breaks = seq(0, 250, 10))
+tpmt_heat <- ggplot(tpmt1_proc_wt, aes(position, end)) + geom_tile(aes(fill=score)) + scale_fill_gradientn(colours = c("#3F7CB9", "#FFEAF3", "#B21F4E"), values = scales::rescale(c(-0.7, 0.2, 1, 1.3, 2.03)))+ scale_x_continuous(breaks = seq(0, 245, 10), expand=c(0,0)) + theme(legend.position='bottom')+xlab("Position in TPMT") + scale_y_discrete(expand = c(0,0))
 #scale_fill_gradient2(low="#3F7CB9", mid="white", high="#B21F4E", midpoint=1) 
 #scale_fill_distiller(palette= "RdBu")
 tpmt_dssp_schematic <- ggplot() + ggtitle("TPMT mean abundance scores") +
@@ -219,39 +221,101 @@ tpmt_dssp_schematic <- ggplot() + ggtitle("TPMT mean abundance scores") +
   geom_point(data = tpmt1_data, aes(x = position, y = 0), color = "black", size = 1.8) +
   geom_point(data = subset(tpmt1_data, sheet == 1), aes(x = position, y = 0), color = "pink", size = 1.5) +
   geom_point(data = subset(tpmt1_data, helix == 1), aes(x = position, y = 0), color = "cyan", size = 1.5) +
-  scale_x_continuous(breaks = seq(0, 250, 10), expand = c(0,0)) +
+  scale_x_continuous(breaks = seq(0, 245, 10), expand = c(0,0)) +
   scale_y_continuous(breaks = NULL, expand = c(0,0)) +xlab(NULL) + ylab(NULL) +
   theme(panel.border = element_blank(), axis.text.x = element_blank(), axis.text.y = element_blank())
+
+#plots
+plot(tpmt_pos_mean)
+plot(tpmt_heat)
 tpmt_dssp_schematic
 
 #+ geom_vline(xintercept=185, color="black", size=.1) + geom_vline(xintercept=350, color="black", size=.1)
 
 #grouping all variants in the same secondary structure together
 tpmt_aa_sum <- summarySE(tpmt_colors, measurevar="score", groupvars="fact")
-tpmt_aa_mean <- ggplot(tpmt_aa_sum, aes(x=fact, y=score))+ geom_bar(position=position_dodge(), stat="identity", colour="#999999") + geom_errorbar(aes(ymin=score-sd, ymax = score+sd), width=0.001, position=position_dodge()) +ylab("VAMP-seq score")+theme(axis.title.x = element_blank(), axis.text.x = element_blank()) + scale_x_discrete(breaks = seq(0, 250, 10))
+tpmt_aa_mean <- ggplot(tpmt_aa_sum, aes(x=fact, y=score))+ geom_bar(position=position_dodge(), stat="identity", colour="#999999") + geom_errorbar(aes(ymin=score-sd, ymax = score+sd), width=1, size=0.3, position=position_dodge()) +ylab("VAMP-seq score")+theme(axis.title.x = element_blank(), axis.text.x = element_blank()) + scale_x_discrete(breaks = seq(0, 245, 10))
 plot(tpmt_aa_mean)
+```
+```{r}
+#PTEN
+pten_sum <- summarySE(pten1_proc_wt, measurevar="score", groupvars="position")
+head(pten_sum)
+pten_pos_mean <- ggplot(pten_sum, aes(x=position, y=score))+ geom_bar(position=position_dodge(), stat="identity", colour="#999999") + geom_errorbar(aes(ymin=score-sd, ymax = score+sd), width=1, size=0.3, position=position_dodge()) +ylab("VAMP-seq score")+theme(axis.title.x = element_blank(), axis.text.x = element_blank()) + scale_x_continuous(breaks = seq(0, 403, 20), expand = c(0,0)) + scale_y_continuous(expand = c(0,0)) + geom_vline(xintercept=185, color="black", size=.1) + geom_vline(xintercept=350, color="black", size=.1)
+pten_heat <- ggplot(pten1_proc_wt, aes(position, end)) + geom_tile(aes(fill=score)) + scale_fill_gradientn(colours = c("#3F7CB9", "#FFEAF3", "#B21F4E"), values = scales::rescale(c(-0.23, 0.42, 1, 1.2, 1.47)))+ scale_x_continuous(breaks = seq(0, 403, 20), expand=c(0,0)) + theme(legend.position='bottom')+xlab("Position in TPMT") + scale_y_discrete(expand = c(0,0))
+#c(-0.7, 0.2, 1, 1.3, 2.03)
+#c(-0.23, 0.42, 1, 1.2, 1.47)
+pten_extra <- read.table(file = '~/leklab/leklab/PTEN_positional_data.tsv', sep = '\t', header = TRUE)
+pten_dssp_schematic <- ggplot() + ggtitle("PTEN mean abundance scores") +
+  geom_segment(aes(x = 1, y = 0, xend = max(pten_extra$position)), yend = 0, size = 1, color = "grey70") +
+  geom_point(data = subset(pten_extra, !is.na(xca)), aes(x = position, y = 0), color = "black", size = 1.8) +
+  geom_point(data = subset(pten_extra, sheet == 1), aes(x = position, y = 0), color = "pink", size = 1.5) +
+  geom_point(data = subset(pten_extra, helix == 1), aes(x = position, y = 0), color = "cyan", size = 1.5) +
+  scale_x_continuous(breaks = seq(0, 403, 20), expand = c(0,0)) +
+  scale_y_continuous(breaks = NULL, expand = c(0,0)) +xlab(NULL) + ylab(NULL) +
+  theme(panel.border = element_blank(), axis.text.x = element_blank(), axis.text.y = element_blank())
 
-plot(tpmt_pos_mean)
-plot(tpmt_heat)
+#plots
+plot(pten_pos_mean)
+plot(pten_heat)
+pten_dssp_schematic
 
+```
+
+
+```{r}
+#...pointless to represent data this way ...
+
+#dbNSFP
+#setup
+tpmt_merge_copy <- tpmt_merge
+tpmt_merge_expand_copy <- tpmt_merge_expand
+#tpmt_merge_copy$SIFT_converted_rankscore[which(tpmt_merge_copy$SIFT_score == '.')] = NA
+tpmt_merge_copy$SIFT_score <- as.numeric(tpmt_merge_copy$SIFT_score)
+tpmt_merge_copy$SIFT_converted_rankscore <- as.numeric(tpmt_merge_copy$SIFT_converted_rankscore)
+tpmt_merge_expand_copy$Polyphen2_HVAR_score <- as.numeric(tpmt_merge_expand_copy$Polyphen2_HVAR_score)
+
+#sift_sum
+tpmt_sift_sum <- summarySE(tpmt_merge_copy, measurevar="SIFT_score", groupvars="position")
+tss_plot <- ggplot(tpmt_sift_sum, aes(x=position, y=SIFT_score))+ geom_bar(position=position_dodge(), stat="identity", colour="#999999") + geom_errorbar(aes(ymin=SIFT_score-sd, ymax =SIFT_score+sd), width=1, size=0.3, position=position_dodge()) +ylab("dfNSFP SIFT score")+theme(axis.title.x = element_blank(), axis.text.x = element_blank()) + scale_x_continuous(breaks = seq(0, 245, 10), expand = c(0,0)) + scale_y_continuous(expand = c(0,0))
+#plot(tss_plot)
+
+#HVAR_sum
+tpmt_hvar_sum <-summarySE(tpmt_merge_expand_copy, measurevar="Polyphen2_HVAR_score", groupvars="position")
+ths_plot <- ggplot(tpmt_hvar_sum, aes(x=position, y=Polyphen2_HVAR_score))+ geom_bar(position=position_dodge(), stat="identity", colour="#999999") + geom_errorbar(aes(ymin=Polyphen2_HVAR_score-sd, ymax =Polyphen2_HVAR_score+sd), width=1, size=0.3, position=position_dodge()) +ylab("dfNSFP HVAR score")+theme(axis.title.x = element_blank(), axis.text.x = element_blank()) + scale_x_continuous(breaks = seq(0, 245, 10), expand = c(0,0)) + scale_y_continuous(expand = c(0,0))
+#plot(ths_plot)
+```
+
+```{r}
 #method1 (basic, for visualizing in rstudio)
 grid.newpage()
 grid.draw(rbind(ggplotGrob(tpmt_dssp_schematic), ggplotGrob(tpmt_pos_mean), ggplotGrob(tpmt_heat), size = "last"))
+
+grid.newpage()
+grid.draw(rbind(ggplotGrob(pten_dssp_schematic), ggplotGrob(pten_pos_mean), ggplotGrob(pten_heat), size = "last"))
 
 #method2 (use for final layout, size specification, download)
 gA=ggplot_gtable(ggplot_build(tpmt_pos_mean))
 gB=ggplot_gtable(ggplot_build(tpmt_heat))
 gC=ggplot_gtable(ggplot_build(tpmt_dssp_schematic))
-maxWidth = grid::unit.pmax(gA$widths, gB$widths, gC$widths)
+ga=ggplot_gtable(ggplot_build(pten_pos_mean))
+gb=ggplot_gtable(ggplot_build(pten_heat))
+gc=ggplot_gtable(ggplot_build(pten_dssp_schematic))
+maxWidth = grid::unit.pmax(gA$widths, gB$widths, gC$widths, ga$widths, gb$widths, gc$widths)
 gA$widths <- as.list(maxWidth)
 gB$widths <- as.list(maxWidth)
 gC$widths <- as.list(maxWidth)
+ga$widths <- as.list(maxWidth)
+gb$widths <- as.list(maxWidth)
+gc$widths <- as.list(maxWidth)
+
 grid.newpage()
 
 #storing, with specified widths!!
-#pdf('tpmt_mean_heat1.pdf', width=8, height=6)
-#grid.arrange(arrangeGrob(gC,gA,gB,nrow=3,heights=c(.1,.3,.8)))
-#dev.off()
+pdf('tpmt_mean_heat1.pdf', width=8, height=6)
+grid.arrange(arrangeGrob(gC,gA,gB,nrow=3,heights=c(.1,.3,.8)))
+grid.arrange(arrangeGrob(gc,ga,gb,nrow=3,heights=c(.1,.3,.8)))
+dev.off()
 ```
 ```{r}
 tpmt_sum_o <- tpmt_sum[order(tpmt_sum$score),]
@@ -283,10 +347,63 @@ aaa$position <- factor(aaa$position, levels=unique(aaa$position)[order(aaa$means
 plot(tpmt_pos_mean_o)
 plot(tpmt_heat_o)
 ```
+```{r}
+#plotting mean score vs end 
+tpmt_end_sum <- summarySE(tpmt1_proc_wt, measurevar="score", groupvars="end")
+head(tpmt_end_sum)
+tpmt_end_mean <- ggplot(tpmt_end_sum, aes(x=end, y=score)) +
+  geom_bar(position=position_dodge(), stat="identity", colour="#999999") +
+  geom_errorbar(aes(ymin=score-sd, ymax=score+sd), width=0.001, position=position_dodge()) +
+  ylab("mean abundance") + xlab("variant amino acid")
+plot(tpmt_end_mean)
+
+```
+```{r}
+#plotting scores vs end colored by location/secondary structure
+#tpmt_end_scores_b <- ggplot(data=subset(tpmt1_proc_wt, sheet==1), aes(x=end, y=score, colour=position)) +
+#  geom_violin(data=subset(tpmt1_proc_wt, sheet==1), draw_quantiles=0.5, scale = "width") +
+#  geom_point(data=subset(tpmt1_proc_wt, sheet==1), size=.3, alpha = 0.6, position=jitter2) + ylab("abundance") + xlab("variant aa") +
+#  scale_y_continuous(limits = c(-0.8, 2.2))
+
+#tpmt_end_scores_a <- ggplot(data=subset(tpmt1_proc_wt, helix==1), aes(x=end, y=score, colour=position)) +
+#  geom_violin(data=subset(tpmt1_proc_wt, helix==1), draw_quantiles=0.5, scale = "width") +
+#  geom_point(data=subset(tpmt1_proc_wt, helix==1), size=.3, alpha = 0.6, position=jitter2) + ylab("abundance") + xlab("variant aa") +
+#  scale_y_continuous(limits = c(-0.8, 2.2))
+
+#tpmt_end_scores_n <- ggplot(data=subset(tpmt1_proc_wt, secondary_struct=="neither"), aes(x=end, y=score, colour=position)) +
+#  geom_violin(data=subset(tpmt1_proc_wt, secondary_struct=="neither"), draw_quantiles=0.5, scale = "width") +
+#  geom_point(data=subset(tpmt1_proc_wt, secondary_struct=="neither"), size=.3, alpha = 0.6, position=jitter2) + ylab("abundance") + xlab("variant aa") +
+#  scale_y_continuous(limits = c(-0.8, 2.2))
+
+#plot(tpmt_end_scores_b)
+#plot(tpmt_end_scores_a)
+#plot(tpmt_end_scores_n)
+
+#tpmt_end_scores_60 <- ggplot(data=subset(tpmt1_proc_wt, position<=60), aes(x=end, y=score, colour=position)) +
+#  geom_violin(data=subset(tpmt1_proc_wt, position<=60), draw_quantiles=0.5, scale = "width") +
+#  geom_point(data=subset(tpmt1_proc_wt, position<=60), size=.3, alpha = 0.6, position=jitter2) + ylab("abundance") + xlab("variant aa") +
+#  scale_y_continuous(limits = c(-0.8, 2.2))
+#tpmt_end_scores_120 <- ggplot(data=subset(tpmt1_proc_wt, position>60 & position<=120), aes(x=end, y=score, colour=position)) +
+#  geom_violin(data=subset(tpmt1_proc_wt, position>60 & position<=120), draw_quantiles=0.5, scale = "width") +
+#  geom_point(data=subset(tpmt1_proc_wt, position>60 & position<=120), size=.3, alpha = 0.6, position=jitter2) + ylab("abundance") + xlab("variant aa") +
+#  scale_y_continuous(limits = c(-0.8, 2.2))
+#tpmt_end_scores_180 <- ggplot(data=subset(tpmt1_proc_wt, position>120 & position<=180), aes(x=end, y=score, colour=position)) +
+#  geom_violin(data=subset(tpmt1_proc_wt, position>120 & position<=180), draw_quantiles=0.5, scale = "width") +
+#  geom_point(data=subset(tpmt1_proc_wt, position>120 & position<=180), size=.3, alpha = 0.6, position=jitter2) + ylab("abundance") + xlab("variant aa") +
+#  scale_y_continuous(limits = c(-0.8, 2.2))
+#tpmt_end_scores_245 <- ggplot(data=subset(tpmt1_proc_wt, position>180 & position<=245), aes(x=end, y=score, colour=position)) +
+#  geom_violin(data=subset(tpmt1_proc_wt, position>180 & position<=245), draw_quantiles=0.5, scale = "width") +
+#  geom_point(data=subset(tpmt1_proc_wt, position>180 & position<=245), size=.3, alpha = 0.6, position=jitter2) + ylab("abundance") + xlab("variant aa") +
+#  scale_y_continuous(limits = c(-0.8, 2.2))
+
+#plot(tpmt_end_scores_60)
+#plot(tpmt_end_scores_120)
+#plot(tpmt_end_scores_180)
+#plot(tpmt_end_scores_245)
+```
 
 
 ```{r}
-
 set.seed(153)
 jitter <- position_jitter(width = 1, height = NULL)
 jitter1 <-position_jitter(width = 0.08, height = NULL)
