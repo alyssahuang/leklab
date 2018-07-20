@@ -21,7 +21,7 @@ Multiplex assessment of protein variant abundance by massively parallel sequenci
 VAMP-seq
 - multiplex assay that uses fluorescent reporters to measure the steady-state abundance of protein variants in cultured human cells (each cellexpresses a single variant directly fused to EGFP...the stability of the variant dictates the abundance of the EGFP fusion and, accordingly, the green fluorescence signal of the cell)
 - used to assess PTEN and TPMT variants 
-```{r}
+```{r include=FALSE}
 par(pch=20, cex=.6)
 pten1_data <- read.delim('~/leklab/leklab/pten1.txt')
 pten1_proc <- pten1_data[!is.na(pten1_data$abundance_class),]
@@ -42,7 +42,7 @@ title('VAMP-seq scores of PTEN and TPMT Variants\nand abundance class')
 #plot(x = pten1_proc$abundance_class, y = pten1_proc$score,type='p', main = "PTEN", xlab = "Abundance", ylab = "VAMP-seq score", col="#74ABD6")
 #points(x = tpmt1_proc$abundance_class, y = tpmt1_proc$score, type='p', col = "#ADDFAD")
 ```
-```{r}
+```{r include=FALSE}
 
 # d <- read.table(text = "col_a col_b 
 #                         aa    1
@@ -88,20 +88,17 @@ title('VAMP-seq scores of PTEN and TPMT Variants\nand abundance class')
 # bp = boxplot(col_b~label+col_a, data = f, at = c(1, 1.8, 3, 3.8, 5, 5.8, 7.2, 8), xaxt='n', ylim = c(.9, 1.9), col = c('white', 'gray'))
 # axis(side=1, at=c(1.4, 3.4, 5.4, 7.6), labels=c('aa', 'ba', 'ca', 'da'), title('practice'))
 ```
-
-
 ```{r}
 #plots VAMP-seq score vs abundance_class
 
-
-VAMP_abundance <- ggplot(ff, aes(x=abundance_class, y=score, fill=protein)) + geom_violin(draw_quantiles = 0.5)+ylab("VAMP-seq score")+xlab("Abundance Class")+theme(legend.title=element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_line(colour = "grey"))+ggtitle("VAMP-seq scores for each abundance classification")+geom_point(data=data.frame(x="wt-like", y=1, protein = "PTEN"), aes(x,y), colour="black", size=1.5, show.legend=FALSE)+annotate("text", x = "wt-like", y=1.09, label = "WT",colour= "black", size = 4) + scale_y_continuous(minor_breaks = seq(-2, 2, .25))
+VAMP_abundance <- ggplot(ff, aes(x=abundance_class, y=score, fill=protein)) + geom_violin(draw_quantiles = 0.5)+ylab("VAMP-seq score")+xlab("Abundance Class")+theme(legend.title=element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_line(colour = "grey"))+ggtitle("VAMP-seq scores for each abundance classification")+geom_point(data=data.frame(x="wt-like", y=1, protein = "PTEN"), aes(x,y), colour="black", size=1.5, show.legend=FALSE)+annotate("text", x = "wt-like", y=1.09, label = "WT",colour= "black", size = 4) + scale_y_continuous(minor_breaks = seq(-2, 2, .25))+theme_bw()
 plot(VAMP_abundance)
 ```
-```{r}
+```{r include=FALSE}
 #plots helix vs score for PTEN
-ggplot(pten1_data, aes(x=as.factor(helix), y=score)) + geom_boxplot()+ylab("VAMP-seq score")
+#ggplot(pten1_data, aes(x=as.factor(helix), y=score)) + geom_boxplot()+ylab("VAMP-seq score")
 ```
-```{r}
+```{r include=FALSE}
 #combining pten1_data and tpmt1_data into one large data frame, differentiate between the two w/ column 'protein' which specifies 'PTEN' or 'TPMT'
 pten1_data$protein <- rep("PTEN", nrow(pten1_data))
 tpmt1_data$protein <- rep("TPMT", nrow(tpmt1_data))
@@ -139,7 +136,6 @@ combined <- grid.arrange(h_plot, s_plot, n_plot, ncol=3, top = "Variant scores i
 ```
 
 ```{r}
-
 # graph VAMP-seq scores relative to variant position in protein
 #pten
 pten1_proc_wt <- pten1_proc[!is.na(pten1_proc$position),]
@@ -148,7 +144,7 @@ pten1_proc_wt$secondary_struct <- ifelse(is.na(pten1_proc_wt$helix), "unknown",
                         ifelse(pten1_proc_wt$sheet==1, "sheet",
                         ifelse(pten1_proc_wt$helix==0, "neither",
                         "unknown"))))
-pten_pos <- ggplot(pten1_proc_wt, aes(x=position, y=score, colour=secondary_struct))+ geom_point(size=.3) + scale_x_continuous(minor_breaks = seq(0, 420, 5)) + scale_color_manual(values=c("#FF4848", "#00C853", "#5757FF", "#A9A9A9")) +ylab("VAMP-seq score")+xlab("Position in PTEN")+labs(colour="Secondary Structure")+ggtitle("PTEN scores in relation to protein structure") + geom_vline(xintercept=27, color="black", size=.1) + geom_vline(xintercept=55, color="black", size=.1) + geom_vline(xintercept=70, color="black", size=.1) + geom_vline(xintercept=85, color="black", size=.1) + geom_vline(xintercept=164.5, color="black", size=.1) + geom_vline(xintercept=212, color="black", size=.1) + geom_vline(xintercept=267.5, color="black", size=.1) + geom_vline(xintercept=343.5, color="black", size=.1)
+pten_pos <- ggplot(pten1_proc_wt, aes(x=position, y=score, colour=secondary_struct))+ geom_point(size=.3) + scale_x_continuous(minor_breaks = seq(0, 420, 5)) + scale_color_manual(values=c("#FF4848", "#00C853", "#5757FF", "#A9A9A9")) +ylab("VAMP-seq score")+xlab("Position in PTEN")+labs(colour="Secondary Structure")+ggtitle("PTEN scores in relation to protein structure") + geom_vline(xintercept=27, color="black", size=.1) + geom_vline(xintercept=55, color="black", size=.1) + geom_vline(xintercept=70, color="black", size=.1) + geom_vline(xintercept=85, color="black", size=.1) + geom_vline(xintercept=164.5, color="black", size=.1) + geom_vline(xintercept=212, color="black", size=.1) + geom_vline(xintercept=267.5, color="black", size=.1) + geom_vline(xintercept=343.5, color="black", size=.1)+theme_bw()
 
 pten_hydro <- ggplot(pten1_proc_wt, aes(x=position, y=score, colour=(hydro2-hydro1)))+ geom_point(size=.3, alpha = 0.3) + scale_x_continuous(minor_breaks = seq(0, 420, 5)) + ylab("VAMP-seq score")+xlab("Position in PTEN")+labs(colour="Hydrophobicity")+ggtitle("PTEN scores in relation to change in hydrophobicity") + geom_vline(xintercept=27, color="black", size=.1) + geom_vline(xintercept=55, color="black", size=.1) + geom_vline(xintercept=70, color="black", size=.1) + geom_vline(xintercept=85, color="black", size=.1) + geom_vline(xintercept=164.5, color="black", size=.1) + geom_vline(xintercept=212, color="black", size=.1) + geom_vline(xintercept=267.5, color="black", size=.1) + geom_vline(xintercept=343.5, color="black", size=.1)
 
@@ -160,7 +156,7 @@ tpmt1_proc_wt$secondary_struct <- ifelse(is.na(tpmt1_proc_wt$helix), "unknown",
                         ifelse(tpmt1_proc_wt$sheet==1, "sheet",
                         ifelse(tpmt1_proc_wt$helix==0, "neither",
                         "unknown"))))
-tpmt_pos <- ggplot(tpmt1_proc_wt, aes(x=position, y=score, colour=secondary_struct))+ geom_point(size=.3) + scale_x_continuous(minor_breaks = seq(0, 405, 5)) + scale_color_manual(values=c("#FF4848", "#00C853", "#5757FF", "#A9A9A9")) +ylab("VAMP-seq score")+xlab("Position in TPMT")+labs(colour="Secondary Structure")+ggtitle("TPMT scores in relation to protein structure") + geom_vline(xintercept=47, color="black", size=.1) + geom_vline(xintercept=78, color="black", size=.1) + geom_vline(xintercept=122.5, color="black", size=.1) + geom_vline(xintercept=140, color="black", size=.1) + geom_vline(xintercept=165, color="black", size=.1) + geom_vline(xintercept=194, color="black", size=.1) + geom_vline(xintercept=209, color="black", size=.1)
+tpmt_pos <- ggplot(tpmt1_proc_wt, aes(x=position, y=score, colour=secondary_struct))+ geom_point(size=.3) + scale_x_continuous(minor_breaks = seq(0, 405, 5)) + scale_color_manual(values=c("#FF4848", "#00C853", "#5757FF", "#A9A9A9")) +ylab("VAMP-seq score")+xlab("Position in TPMT")+labs(colour="Secondary Structure")+ggtitle("TPMT scores in relation to protein structure") + geom_vline(xintercept=47, color="black", size=.1) + geom_vline(xintercept=78, color="black", size=.1) + geom_vline(xintercept=122.5, color="black", size=.1) + geom_vline(xintercept=140, color="black", size=.1) + geom_vline(xintercept=165, color="black", size=.1) + geom_vline(xintercept=194, color="black", size=.1) + geom_vline(xintercept=209, color="black", size=.1)+theme_bw()
 
 tpmt_colors <- tpmt1_proc_wt
 #[order(position, variant),]
@@ -205,7 +201,26 @@ plot(tpmt_pos)
 #plot(pten_aa_spread)
 #plot(pten_aa_spread1)
 ```
+```{r}
+# graph VAMP-seq scores relative to variant position in protein
+#pten
+pten1_hbond <- pten1_proc[!is.na(pten1_proc$hbond_sum),]
+pten1_hbond$secondary_struct <- ifelse(is.na(pten1_hbond$helix), "unknown",
+                        ifelse(pten1_hbond$helix==1, "helix",
+                        ifelse(pten1_hbond$sheet==1, "sheet",
+                        ifelse(pten1_hbond$helix==0, "neither",
+                        "unknown"))))
+pten_plot_hbond <- ggplot(pten1_hbond, aes(x=hbond_sum, y=score, colour=secondary_struct))+ geom_point(alpha=0.4) + ylab("VAMP-seq score")+xlab("DSSP Sum of hydrogen bonds")+ggtitle("PTEN scores in relation to hydrogen bonding") + scale_color_manual(values=c("#FF4848", "#696969", "#5757FF")) + labs(colour="Secondary Structure") + theme_bw()
+plot(pten_plot_hbond)
 
+pten_plot_hbond1 <- ggplot(pten1_hbond, aes(x=hbond_sum, y=score))+ geom_point(alpha = 0.2) + ylab("VAMP-seq score")+xlab("DSSP Sum of hydrogen bonds")+ggtitle("PTEN scores in relation to hydrogen bonding") + theme_bw()
+
+# was in aes, ggplot function call ---> colour=secondary_struct
+#scale_color_manual(values=c("#FF4848", "#00C853", "#5757FF", "#A9A9A9")) + labs(colour="Secondary Structure")+
+
+plot(pten_plot_hbond1)
+#less hydrogen bonds ~ higher abundance
+```
 ```{r}
 #TPMT
 tpmt_sum <- summarySE(tpmt1_proc_wt, measurevar="score", groupvars="position")
@@ -234,13 +249,13 @@ tpmt_dssp_schematic
 
 #grouping all variants in the same secondary structure together
 tpmt_aa_sum <- summarySE(tpmt_colors, measurevar="score", groupvars="fact")
-tpmt_aa_mean <- ggplot(tpmt_aa_sum, aes(x=fact, y=score))+ geom_bar(position=position_dodge(), stat="identity", colour="#999999") + geom_errorbar(aes(ymin=score-sd, ymax = score+sd), width=1, size=0.3, position=position_dodge()) +ylab("VAMP-seq score")+theme(axis.title.x = element_blank(), axis.text.x = element_blank()) + scale_x_discrete(breaks = seq(0, 245, 10))
+tpmt_aa_mean <- ggplot(tpmt_aa_sum, aes(x=fact, y=score))+ geom_bar(position=position_dodge(), stat="identity", colour="#999999") + geom_errorbar(aes(ymin=score-sd, ymax = score+sd), width=1, size=0.3, position=position_dodge()) +ylab("VAMP-seq score")+theme(axis.text.x = element_blank()) + scale_x_discrete(breaks = seq(0, 245, 10)) + xlab("each bar is a different secondary structure")
 plot(tpmt_aa_mean)
 ```
 ```{r}
 #PTEN
 pten_sum <- summarySE(pten1_proc_wt, measurevar="score", groupvars="position")
-head(pten_sum)
+#head(pten_sum)
 pten_pos_mean <- ggplot(pten_sum, aes(x=position, y=score))+ geom_bar(position=position_dodge(), stat="identity", colour="#999999") + geom_errorbar(aes(ymin=score-sd, ymax = score+sd), width=1, size=0.3, position=position_dodge()) +ylab("VAMP-seq score")+theme(axis.title.x = element_blank(), axis.text.x = element_blank()) + scale_x_continuous(breaks = seq(0, 403, 20), expand = c(0,0)) + scale_y_continuous(expand = c(0,0)) + geom_vline(xintercept=185, color="black", size=.1) + geom_vline(xintercept=350, color="black", size=.1)
 pten_heat <- ggplot(pten1_proc_wt, aes(position, end)) + geom_tile(aes(fill=score)) + scale_fill_gradientn(colours = c("#3F7CB9", "#FFEAF3", "#B21F4E"), values = scales::rescale(c(-0.23, 0.42, 1, 1.2, 1.47)))+ scale_x_continuous(breaks = seq(0, 403, 20), expand=c(0,0)) + theme(legend.position='bottom')+xlab("Position in TPMT") + scale_y_discrete(expand = c(0,0))
 #c(-0.7, 0.2, 1, 1.3, 2.03)
@@ -263,7 +278,7 @@ pten_dssp_schematic
 ```
 
 
-```{r}
+```{r include=FALSE}
 #...pointless to represent data this way ...
 
 #dbNSFP
@@ -312,29 +327,24 @@ gc$widths <- as.list(maxWidth)
 grid.newpage()
 
 #storing, with specified widths!!
-pdf('tpmt_mean_heat1.pdf', width=8, height=6)
+pdf('pten_tpmt_mean_heat.pdf', width=8, height=6)
 grid.arrange(arrangeGrob(gC,gA,gB,nrow=3,heights=c(.1,.3,.8)))
 grid.arrange(arrangeGrob(gc,ga,gb,nrow=3,heights=c(.1,.3,.8)))
 dev.off()
 ```
-```{r}
-tpmt_sum_o <- tpmt_sum[order(tpmt_sum$score),]
-tpmt_sum_o$position <- factor(tpmt_sum_o$position, levels=tpmt_sum_o$position[order(tpmt_sum_o$score)])
-#head(tpmt_sum_o)
-tpmt_pos_mean_o <- ggplot(tpmt_sum_o, aes(x=factor(position), y=score))+ geom_bar(position=position_dodge(), stat="identity", colour="#999999") + geom_errorbar(aes(ymin=score-sd, ymax = score+sd), width=0.001, position=position_dodge()) +ylab("VAMP-seq score")+theme(axis.title.x = element_blank(), axis.text.x = element_blank()) + scale_x_discrete(breaks = seq(0, 250, 10))
-aaa <- tpmt1_proc_wt
-aaa$means <- tpmt_sum[match(aaa$position, tpmt_sum$position),2]
-#aaa$means[aaa$position==tpmt_sum$position] <- tpmt_sum$score
-head(aaa)
-bbb <- aaa[order(aaa$mean),]
-bbb$position <- as.factor(bbb$position)
-head(bbb)
-tpmt_heat_o <- ggplot(bbb, aes(x=factor(position), y=end)) + geom_tile(aes(fill=score)) + scale_fill_gradientn(colours = c("#3F7CB9", "#FFEAF3", "#B21F4E"), values = scales::rescale(c(-0.7, 0.2, 1, 1.3, 2.03)))+ scale_x_discrete(breaks = seq(0, 250, 10)) + theme(legend.position='bottom')+xlab("Position in TPMT")
+```{r include=FALSE}
+##attempt to order by abundance...
+#tpmt_sum_o <- tpmt_sum[order(tpmt_sum$score),]
+#tpmt_sum_o$position <- factor(tpmt_sum_o$position, levels=tpmt_sum_o$position[order(tpmt_sum_o$score)])
+#tpmt_pos_mean_o <- ggplot(tpmt_sum_o, aes(x=factor(position), y=score))+ geom_bar(position=position_dodge(), stat="identity", colour="#999999") + geom_errorbar(aes(ymin=score-sd, ymax = score+sd), width=0.001, position=position_dodge()) +ylab("VAMP-seq score")+theme(axis.title.x = element_blank(), axis.text.x = element_blank()) + scale_x_discrete(breaks = seq(0, 250, 10))
+#aaa <- tpmt1_proc_wt
+#aaa$means <- tpmt_sum[match(aaa$position, tpmt_sum$position),2]
+#bbb <- aaa[order(aaa$mean),]
+#bbb$position <- as.factor(bbb$position)
+#tpmt_heat_o <- ggplot(bbb, aes(x=factor(position), y=end)) + geom_tile(aes(fill=score)) + scale_fill_gradientn(colours = c("#3F7CB9", "#FFEAF3", "#B21F4E"), values = scales::rescale(c(-0.7, 0.2, 1, 1.3, 2.03)))+ scale_x_discrete(breaks = seq(0, 250, 10)) + theme(legend.position='bottom')+xlab("Position in TPMT")
 
-aaa$position <- factor(aaa$position, levels=unique(aaa$position)[order(aaa$means)])
+#aaa$position <- factor(aaa$position, levels=unique(aaa$position)[order(aaa$means)])
 #tpmt_heat_o <- ggplot(aaa, aes(x=factor(mean), y=end)) + geom_tile(aes(fill=score)) + scale_fill_gradientn(colours = c("#3F7CB9", "#FFEAF3", "#B21F4E"), values = scales::rescale(c(-0.7, 0.2, 1, 1.3, 2.03)))+ scale_x_discrete(breaks = seq(0, 250, 10)) + theme(legend.position='bottom')+xlab("Position in TPMT")
-#scale_fill_gradient2(low="#3F7CB9", mid="white", high="#B21F4E", midpoint=1) 
-#scale_fill_distiller(palette= "RdBu")
 #tpmt_dssp_schematic <- ggplot() + ggtitle("TPMT mean abundance scores") +
 #  geom_segment(aes(x = 1, y = 0, xend = max(tpmt1_data$position)), yend = 0, size = 1, color = "grey70") +
 #  geom_point(data = tpmt1_data, aes(x = position, y = 0), color = "black", size = 1.8) +
@@ -344,21 +354,20 @@ aaa$position <- factor(aaa$position, levels=unique(aaa$position)[order(aaa$means
 #  scale_y_continuous(breaks = NULL, expand = c(0,0)) +xlab(NULL) + ylab(NULL) +
 #  theme(panel.border = element_blank(), axis.text.x = element_blank(), axis.text.y = element_blank())
 #tpmt_dssp_schematic
-plot(tpmt_pos_mean_o)
-plot(tpmt_heat_o)
+#plot(tpmt_pos_mean_o)
+#plot(tpmt_heat_o)
 ```
 ```{r}
-#plotting mean score vs end 
+#plotting mean score vs variant changed to 
 tpmt_end_sum <- summarySE(tpmt1_proc_wt, measurevar="score", groupvars="end")
-head(tpmt_end_sum)
 tpmt_end_mean <- ggplot(tpmt_end_sum, aes(x=end, y=score)) +
   geom_bar(position=position_dodge(), stat="identity", colour="#999999") +
   geom_errorbar(aes(ymin=score-sd, ymax=score+sd), width=0.001, position=position_dodge()) +
-  ylab("mean abundance") + xlab("variant amino acid")
+  ylab("mean abundance") + xlab("variant amino acid") + theme_bw()
 plot(tpmt_end_mean)
 
 ```
-```{r}
+```{r include=FALSE}
 #plotting scores vs end colored by location/secondary structure
 #tpmt_end_scores_b <- ggplot(data=subset(tpmt1_proc_wt, sheet==1), aes(x=end, y=score, colour=position)) +
 #  geom_violin(data=subset(tpmt1_proc_wt, sheet==1), draw_quantiles=0.5, scale = "width") +
@@ -412,33 +421,33 @@ twenty_color = c("#D02028", "#E1A12F", "#EDD941", "#F2F08E", "#EEC898", "#BCDDAE
 
 #pten_k_spread1 <- ggplot(pten1_proc_wt, aes(y=score, x=start)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "K"), aes(group=factor(position))) + xlab("Position in PTEN") + ggtitle("Lysine variant abundance scores")
 
-pten_k_spread1 <- ggplot(pten1_proc_wt, aes(y=score, x=factor(position), colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "K"), aes(group=factor(position)), scale = "width") + xlab("Position in PTEN") + ggtitle("Lysine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "K"), aes(x=factor(position), y=score), alpha = 0.85, position=jitter2) + scale_color_manual(values=twenty_color)
-pten_k_aa <- ggplot(pten1_proc_wt, aes(y=score, x=end, colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "K"), aes(group=end), scale = "width") + xlab("Amino acid") + ggtitle("Lysine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "K"), aes(x=end, y=score), alpha = 0.75, position=jitter1) + scale_color_manual(values=twenty_color)
+pten_k_spread1 <- ggplot(pten1_proc_wt, aes(y=score, x=factor(position), colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "K"), aes(group=factor(position)), scale = "width") + xlab("Position in PTEN") + ggtitle("Lysine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "K"), aes(x=factor(position), y=score), alpha = 0.85, position=jitter2) + scale_color_manual(values=twenty_color) + theme_bw()
+pten_k_aa <- ggplot(pten1_proc_wt, aes(y=score, x=end, colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "K"), aes(group=end), scale = "width") + xlab("Amino acid") + ggtitle("Lysine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "K"), aes(x=end, y=score), alpha = 0.75, position=jitter1) + scale_color_manual(values=twenty_color) + theme_bw()
 
-pten_g_spread1 <- ggplot(pten1_proc_wt, aes(y=score, x=factor(position), colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "G"), aes(group=factor(position)), scale = "width") + xlab("Position in PTEN") + ggtitle("Glycine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "G"), aes(x=factor(position), y=score), alpha = 0.85, position=jitter2) + scale_color_manual(values=twenty_color)
-pten_g_aa <- ggplot(pten1_proc_wt, aes(y=score, x=end, colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "G"), aes(group=end), scale = "width") + xlab("Amino acid") + ggtitle("Glycine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "G"), aes(x=end, y=score), alpha = 0.75, position=jitter1) + scale_color_manual(values=twenty_color)
-pten_g_hydrodiff <- ggplot(pten1_proc_wt, aes(y=score, x=factor(position), colour = (hydro2-hydro1))) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "G"), aes(group=factor(position)), scale = "width") + xlab("Position in PTEN") + ggtitle("Glycine variant abundance scores w/ hydrophobicity change")+ geom_point(data=subset(pten1_proc_wt, start== "G"), aes(x=factor(position), y=score), alpha = 0.85, position=jitter2) + scale_color_distiller(palette = "Spectral")
+pten_g_spread1 <- ggplot(pten1_proc_wt, aes(y=score, x=factor(position), colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "G"), aes(group=factor(position)), scale = "width") + xlab("Position in PTEN") + ggtitle("Glycine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "G"), aes(x=factor(position), y=score), alpha = 0.85, position=jitter2) + scale_color_manual(values=twenty_color) + theme_bw()
+pten_g_aa <- ggplot(pten1_proc_wt, aes(y=score, x=end, colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "G"), aes(group=end), scale = "width") + xlab("Amino acid") + ggtitle("Glycine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "G"), aes(x=end, y=score), alpha = 0.75, position=jitter1) + scale_color_manual(values=twenty_color) + theme_bw()
+pten_g_hydrodiff <- ggplot(pten1_proc_wt, aes(y=score, x=factor(position), colour = (hydro2-hydro1))) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "G"), aes(group=factor(position)), scale = "width") + xlab("Position in PTEN") + ggtitle("Glycine variant abundance scores w/ hydrophobicity change")+ geom_point(data=subset(pten1_proc_wt, start== "G"), aes(x=factor(position), y=score), alpha = 0.85, position=jitter2) + scale_color_distiller(palette = "Spectral") + theme_bw()
 
-pten_c_spread <- ggplot(pten1_proc_wt, aes(y=score, x=position)) + geom_point(data=subset(pten1_proc_wt, start== "C")) + xlab("Position in PTEN") + ggtitle("Cysteine variant abundance scores")
+pten_c_spread <- ggplot(pten1_proc_wt, aes(y=score, x=position)) + geom_point(data=subset(pten1_proc_wt, start== "C")) + xlab("Position in PTEN") + ggtitle("Cysteine variant abundance scores") + theme_bw()
 #experiment_orig
 #pten_c_spread1 <- ggplot(pten1_proc_wt, aes(y=score, x=position, colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "C"), aes(group=position%%450), scale = "width") + xlab("Position in PTEN") + ggtitle("Cysteine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "C"), aes(x=position, y=score), alpha = 0.75, position=jitter) + scale_color_manual(values=c("#D02028", "#E1A12F", "#EDD941", "#F2F08E", "#EEC898", "#BCDDAE", "#A4C33B", "#76C158", "#85782E", "#315935", "#53958B", "#A1DAE0", "#486EB6", "#E6A3B4", "#C5A0CA", "#554DA0", "#99247E", "#402059", "#82421B", "#7E807E", 'black'))
 #, scale = "count"
 #+ geom_point(data=subset(pten1_proc_wt, start== "C"), aes(x=position, y=score), alpha = 0.5)
-pten_c_spread1 <- ggplot(pten1_proc_wt, aes(y=score, x=position, colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "C"), aes(group=position%%450), scale = "width") + xlab("Position in PTEN") + ggtitle("Cysteine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "C"), aes(x=position, y=score), alpha = 0.75, position=jitter1) + scale_color_manual(values=twenty_color)
-pten_c_aa <- ggplot(pten1_proc_wt, aes(y=score, x=end, colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "C"), aes(group=end), scale = "width") + xlab("Amino acid") + ggtitle("Cysteine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "C"), aes(x=end, y=score), alpha = 0.75, position=jitter1) + scale_color_manual(values=twenty_color)
+pten_c_spread1 <- ggplot(pten1_proc_wt, aes(y=score, x=position, colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "C"), aes(group=position%%450), scale = "width") + xlab("Position in PTEN") + ggtitle("Cysteine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "C"), aes(x=position, y=score), alpha = 0.75, position=jitter1) + scale_color_manual(values=twenty_color) + theme_bw()
+pten_c_aa <- ggplot(pten1_proc_wt, aes(y=score, x=end, colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "C"), aes(group=end), scale = "width") + xlab("Amino acid") + ggtitle("Cysteine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "C"), aes(x=end, y=score), alpha = 0.75, position=jitter1) + scale_color_manual(values=twenty_color) + theme_bw()
 
-pten_c_hydrodiff <- ggplot(pten1_proc_wt, aes(y=score, x=position, colour = (hydro2-hydro1))) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "C"), aes(group=position%%450), scale = "width") + xlab("Position in PTEN") + ggtitle("Cysteine variant abundance scores w/ hydrophobicity change")+ geom_point(data=subset(pten1_proc_wt, start== "C"), aes(x=position, y=score), alpha = 0.75, position=jitter1) + scale_color_distiller(palette = "Spectral")
+pten_c_hydrodiff <- ggplot(pten1_proc_wt, aes(y=score, x=position, colour = (hydro2-hydro1))) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "C"), aes(group=position%%450), scale = "width") + xlab("Position in PTEN") + ggtitle("Cysteine variant abundance scores w/ hydrophobicity change")+ geom_point(data=subset(pten1_proc_wt, start== "C"), aes(x=position, y=score), alpha = 0.75, position=jitter1) + scale_color_distiller(palette = "Spectral") + theme_bw()
 #in in geom_violin(aes()) -> colour = hydro1
 
 
 #pten_s_spread <- ggplot(pten1_proc_wt, aes(y=score, x=position)) + geom_point(data=subset(pten1_proc_wt, start== "S")) + xlab("Position in PTEN") + ggtitle("Serine variant abundance scores")
 #pten_s_spread1_old <- ggplot(pten1_proc_wt, aes(y=score, x=start)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "S"), aes(group=factor(position))) + xlab("Position in PTEN") + ggtitle("Serine variant abundance scores")
-pten_s_spread1 <- ggplot(pten1_proc_wt, aes(y=score, x=factor(position), colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "S"), aes(group=factor(position)), scale = "width") + xlab("Position in PTEN") + ggtitle("Serine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "S"), aes(x=factor(position), y=score), alpha = 0.85, position=jitter2) + scale_color_manual(values=twenty_color)
-pten_s_aa <- ggplot(pten1_proc_wt, aes(y=score, x=end, colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "S"), aes(group=end), scale = "width") + xlab("Amino acid") + ggtitle("Serine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "S"), aes(x=end, y=score), alpha = 0.75, position=jitter1) + scale_color_manual(values=twenty_color)
+pten_s_spread1 <- ggplot(pten1_proc_wt, aes(y=score, x=factor(position), colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "S"), aes(group=factor(position)), scale = "width") + xlab("Position in PTEN") + ggtitle("Serine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "S"), aes(x=factor(position), y=score), alpha = 0.85, position=jitter2) + scale_color_manual(values=twenty_color) + theme_bw()
+pten_s_aa <- ggplot(pten1_proc_wt, aes(y=score, x=end, colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "S"), aes(group=end), scale = "width") + xlab("Amino acid") + ggtitle("Serine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "S"), aes(x=end, y=score), alpha = 0.75, position=jitter1) + scale_color_manual(values=twenty_color) + theme_bw()
 
-pten_s_hydrodiff <- ggplot(pten1_proc_wt, aes(y=score, x=factor(position), colour = (hydro2-hydro1))) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "S"), aes(group=factor(position)), scale = "width") + xlab("Position in PTEN") + ggtitle("Serine variant abundance scores w/ hydrophobicity change")+ geom_point(data=subset(pten1_proc_wt, start== "S"), aes(x=factor(position), y=score), alpha = 0.85, position=jitter2) + scale_color_distiller(palette = "Spectral")
+pten_s_hydrodiff <- ggplot(pten1_proc_wt, aes(y=score, x=factor(position), colour = (hydro2-hydro1))) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "S"), aes(group=factor(position)), scale = "width") + xlab("Position in PTEN") + ggtitle("Serine variant abundance scores w/ hydrophobicity change")+ geom_point(data=subset(pten1_proc_wt, start== "S"), aes(x=factor(position), y=score), alpha = 0.85, position=jitter2) + scale_color_distiller(palette = "Spectral") + theme_bw()
 #graphing abundance vs change in hydrophobicity
-pten_s_hh_hydrodiff <- ggplot(pten1_proc_wt, aes(y=score, x=factor(hydro2-hydro1), colour = (hydro2-hydro1))) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "S"), aes(group=factor(hydro2-hydro1)), scale = "width") + xlab("Change in hydrophobicity") + ggtitle("Serine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "S"), aes(x=factor(hydro2-hydro1), y=score), alpha = 0.75, position=jitter1)
+pten_s_hh_hydrodiff <- ggplot(pten1_proc_wt, aes(y=score, x=factor(hydro2-hydro1), colour = (hydro2-hydro1))) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "S"), aes(group=factor(hydro2-hydro1)), scale = "width") + xlab("Change in hydrophobicity") + ggtitle("Serine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "S"), aes(x=factor(hydro2-hydro1), y=score), alpha = 0.75, position=jitter1) + theme_bw()
 #pten_s_aa_hydrodiff <- ggplot(pten1_proc_wt, aes(y=score, x=end, colour = (hydro2-hydro1))) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "S"), aes(group=end), scale = "width") + xlab("Amino acid") + ggtitle("Serine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "S"), aes(x=end, y=score), alpha = 0.75, position=jitter1)
 #pten_s_aa_voldiff <- ggplot(pten1_proc_wt, aes(y=score, x=end, colour = voldiff)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "S"), aes(group=end), scale = "width") + xlab("Amino acid") + ggtitle("Serine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "S"), aes(x=end, y=score), alpha = 0.75, position=jitter1)
 #pten_s_aa_poldiff <- ggplot(pten1_proc_wt, aes(y=score, x=end, colour = polaritydiff)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "S"), aes(group=end), scale = "width") + xlab("Amino acid") + ggtitle("Serine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "S"), aes(x=end, y=score), alpha = 0.75, position=jitter1)
@@ -451,7 +460,7 @@ pten_s_hh_hydrodiff <- ggplot(pten1_proc_wt, aes(y=score, x=factor(hydro2-hydro1
 
 ##plot(pten_s_spread)
 ##plot(pten_s_spread1_old)
-plot(pten_s_hydrodiff)
+
 #plot(pten_s_hh_hydrodiff) #probably not very useful... does not take into account position anymore
 ##plot(pten_s_aa_hydrodiff)
 ##plot(pten_s_aa_voldiff)
@@ -459,29 +468,30 @@ plot(pten_s_hydrodiff)
 ##plot(pten_s_aa_weightdiff)
 
 
-#plot(pten_c_spread1)
-#plot(pten_c_aa)
+plot(pten_c_spread1)
+plot(pten_c_aa)
 plot(pten_c_hydrodiff)
 plot(pten_s_spread1)
-#plot(pten_s_aa)
-#plot(pten_g_spread1)
-#plot(pten_g_aa)
+plot(pten_s_aa)
+plot(pten_s_hydrodiff)
+plot(pten_g_spread1)
+plot(pten_g_aa)
 plot(pten_g_hydrodiff)
-#plot(pten_k_spread1)
-#plot(pten_k_aa)
+plot(pten_k_spread1)
+plot(pten_k_aa)
 ```
 ```{r}
-pten_a_spread1 <- ggplot(pten1_proc_wt, aes(y=score, x=factor(position), colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "A"), aes(group=factor(position)), scale = "width") + xlab("Position in PTEN") + ggtitle("Alanine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "A"), aes(x=factor(position), y=score), alpha = 0.85, position=jitter2) + scale_color_manual(values=twenty_color)
-pten_a_aa <- ggplot(pten1_proc_wt, aes(y=score, x=end, colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "A"), aes(group=end), scale = "width") + xlab("Amino acid") + ggtitle("Alanine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "A"), aes(x=end, y=score), alpha = 0.75, position=jitter1) + scale_color_manual(values=twenty_color)
+pten_a_spread1 <- ggplot(pten1_proc_wt, aes(y=score, x=factor(position), colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "A"), aes(group=factor(position)), scale = "width") + xlab("Position in PTEN") + ggtitle("Alanine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "A"), aes(x=factor(position), y=score), alpha = 0.85, position=jitter2) + scale_color_manual(values=twenty_color) + theme_bw()
+pten_a_aa <- ggplot(pten1_proc_wt, aes(y=score, x=end, colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "A"), aes(group=end), scale = "width") + xlab("Amino acid") + ggtitle("Alanine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "A"), aes(x=end, y=score), alpha = 0.75, position=jitter1) + scale_color_manual(values=twenty_color) + theme_bw()
 
-pten_r_spread1 <- ggplot(pten1_proc_wt, aes(y=score, x=factor(position), colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "R"), aes(group=factor(position)), scale = "width") + xlab("Position in PTEN") + ggtitle("Arganine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "R"), aes(x=factor(position), y=score), alpha = 0.85, position=jitter2) + scale_color_manual(values=twenty_color)
-pten_r_aa <- ggplot(pten1_proc_wt, aes(y=score, x=end, colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "R"), aes(group=end), scale = "width") + xlab("Amino acid") + ggtitle("Arganine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "R"), aes(x=end, y=score), alpha = 0.75, position=jitter1) + scale_color_manual(values=twenty_color)
+pten_r_spread1 <- ggplot(pten1_proc_wt, aes(y=score, x=factor(position), colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "R"), aes(group=factor(position)), scale = "width") + xlab("Position in PTEN") + ggtitle("Arganine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "R"), aes(x=factor(position), y=score), alpha = 0.85, position=jitter2) + scale_color_manual(values=twenty_color) + theme_bw()
+pten_r_aa <- ggplot(pten1_proc_wt, aes(y=score, x=end, colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "R"), aes(group=end), scale = "width") + xlab("Amino acid") + ggtitle("Arganine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "R"), aes(x=end, y=score), alpha = 0.75, position=jitter1) + scale_color_manual(values=twenty_color) + theme_bw()
 
-pten_n_spread1 <- ggplot(pten1_proc_wt, aes(y=score, x=factor(position), colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "N"), aes(group=factor(position)), scale = "width") + xlab("Position in PTEN") + ggtitle("Asparagine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "N"), aes(x=factor(position), y=score), alpha = 0.85, position=jitter2) + scale_color_manual(values=twenty_color)
-pten_n_aa <- ggplot(pten1_proc_wt, aes(y=score, x=end, colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "N"), aes(group=end), scale = "width") + xlab("Amino acid") + ggtitle("Asparagine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "N"), aes(x=end, y=score), alpha = 0.75, position=jitter1) + scale_color_manual(values=twenty_color)
+pten_n_spread1 <- ggplot(pten1_proc_wt, aes(y=score, x=factor(position), colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "N"), aes(group=factor(position)), scale = "width") + xlab("Position in PTEN") + ggtitle("Asparagine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "N"), aes(x=factor(position), y=score), alpha = 0.85, position=jitter2) + scale_color_manual(values=twenty_color) + theme_bw()
+pten_n_aa <- ggplot(pten1_proc_wt, aes(y=score, x=end, colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "N"), aes(group=end), scale = "width") + xlab("Amino acid") + ggtitle("Asparagine variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "N"), aes(x=end, y=score), alpha = 0.75, position=jitter1) + scale_color_manual(values=twenty_color) + theme_bw()
 
-pten_d_spread1 <- ggplot(pten1_proc_wt, aes(y=score, x=factor(position), colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "D"), aes(group=factor(position)), scale = "width") + xlab("Position in PTEN") + ggtitle("Aspartic Acid variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "D"), aes(x=factor(position), y=score), alpha = 0.85, position=jitter2) + scale_color_manual(values=twenty_color)
-pten_d_aa <- ggplot(pten1_proc_wt, aes(y=score, x=end, colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "D"), aes(group=end), scale = "width") + xlab("Amino acid") + ggtitle("Aspartic Acid variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "D"), aes(x=end, y=score), alpha = 0.75, position=jitter1) + scale_color_manual(values=twenty_color)
+pten_d_spread1 <- ggplot(pten1_proc_wt, aes(y=score, x=factor(position), colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "D"), aes(group=factor(position)), scale = "width") + xlab("Position in PTEN") + ggtitle("Aspartic Acid variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "D"), aes(x=factor(position), y=score), alpha = 0.85, position=jitter2) + scale_color_manual(values=twenty_color) + theme_bw()
+pten_d_aa <- ggplot(pten1_proc_wt, aes(y=score, x=end, colour = end)) + geom_violin(draw_quantiles=c(0.5), data=subset(pten1_proc_wt, start== "D"), aes(group=end), scale = "width") + xlab("Amino acid") + ggtitle("Aspartic Acid variant abundance scores")+ geom_point(data=subset(pten1_proc_wt, start== "D"), aes(x=end, y=score), alpha = 0.75, position=jitter1) + scale_color_manual(values=twenty_color) + theme_bw()
 
 
 plot(pten_a_spread1)
@@ -496,39 +506,8 @@ plot(pten_d_aa)
 
 ```
 
-```{r}
-# graph VAMP-seq scores relative to variant position in protein
-#pten
-pten1_hbond <- pten1_proc[!is.na(pten1_proc$hbond_sum),]
-pten1_hbond$secondary_struct <- ifelse(is.na(pten1_hbond$helix), "unknown",
-                        ifelse(pten1_hbond$helix==1, "helix",
-                        ifelse(pten1_hbond$sheet==1, "sheet",
-                        ifelse(pten1_hbond$helix==0, "neither",
-                        "unknown"))))
-pten_plot_hbond <- ggplot(pten1_hbond, aes(x=hbond_sum, y=score, colour=secondary_struct))+ geom_point(alpha=0.4) + ylab("VAMP-seq score")+xlab("DSSP Sum of hydrogen bonds")+ggtitle("PTEN scores in relation to hydrogen bonding") + scale_color_manual(values=c("#FF4848", "#696969", "#5757FF")) + labs(colour="Secondary Structure")
-plot(pten_plot_hbond)
-
-pten_plot_hbond1 <- ggplot(pten1_hbond, aes(x=hbond_sum, y=score))+ geom_point(alpha = 0.2) + ylab("VAMP-seq score")+xlab("DSSP Sum of hydrogen bonds")+ggtitle("PTEN scores in relation to hydrogen bonding")
-
-# was in aes, ggplot function call ---> colour=secondary_struct
-#scale_color_manual(values=c("#FF4848", "#00C853", "#5757FF", "#A9A9A9")) + labs(colour="Secondary Structure")+
-
-plot(pten_plot_hbond1)
-#less hydrogen bonds ~ higher abundance
-```
-
-```{r}
-#store last four
-
-# pdf("position_hydrogen_bonds.pdf")
-# plot(pten_pos)
-# plot(tpmt_pos)
-# plot(pten_plot_hbond)
-# plot(pten_plot_hbond1)
-# dev.off()
-
-```
-```{r}
+```{r include=FALSE}
+#on hold, creation of amino acid dataframe to plot abundance scores against
 name <- c('Ala', 'Arg', 'Asn', 'Asp', 'Cys', 'Glu', 'Gln', 'Gly', 'His', 'Ile', 'Leu', 'Lys', 'Met', 'Phe', 'Pro', 'Ser', 'Thr', 'Trp', 'Tyr', 'Val')
 quality <- c('Hydrophobic', 'Basic', 'Polar Neutral', 'Acidic', 'Polar Neutral', 'Acidic', 'Polar Neutral', 'Glycine', 'Basic', 'Hydrophobic', 'Hydrophobic', 'Basic', 'Hydrophobic', 'Hydrophobic', 'Hydrophobic', 'Polar Neutral', 'Polar Neutral', 'Hydrophobic', 'Hydrophobic', 'Hydrophobic')
 #abundance <- get better scale
@@ -546,8 +525,7 @@ amino_acids.data <- data.frame(name, quality, abundance, isoelectric, hp_k_d, hp
 
 ```
 
-```{r}
-
+```{r include=FALSE}
 img = readImage("/Users/go2alyssa/Desktop/density_plots.png")
 display(img, method = "raster")
 ```
@@ -561,16 +539,16 @@ tpmt1_synon <- subset(tpmt1_proc, class == "synonymous")
 
 pten1_no_missense <- subset(pten1_proc, class == "synonymous" | class == "nonsense")
 
-ggplot(pten1_nonsense, aes(x=score)) + geom_histogram(binwidth=.01, colour="blue", fill="white") 
+ggplot(pten1_nonsense, aes(x=score)) + geom_histogram(binwidth=.01, colour="blue", fill="white") + theme_bw()
 #+ geom_density()
-ggplot(pten1_synon, aes(x=score)) + geom_histogram(binwidth=.01, colour="red", fill="white")
+ggplot(pten1_synon, aes(x=score)) + geom_histogram(binwidth=.01, colour="red", fill="white") + theme_bw()
 
-ggplot(pten1_proc_wt, aes(x=score)) + geom_histogram(data=subset(pten1_proc_wt,class == "nonsense"), fill = "red", alpha = 0.5, binwidth=.01) + geom_histogram(data=subset(pten1_proc_wt,class == "synonymous"), fill = "blue", alpha = 0.5, binwidth=.01) + geom_histogram(data=subset(pten1_proc_wt,class == "missense"), fill = "green", alpha = 0.2, binwidth=.01)
+ggplot(pten1_proc_wt, aes(x=score)) + geom_histogram(data=subset(pten1_proc_wt,class == "nonsense"), fill = "red", alpha = 0.5, binwidth=.01) + geom_histogram(data=subset(pten1_proc_wt,class == "synonymous"), fill = "blue", alpha = 0.5, binwidth=.01) + geom_histogram(data=subset(pten1_proc_wt,class == "missense"), fill = "green", alpha = 0.2, binwidth=.01) + theme_bw()
 
-ggplot(pten1_no_missense, aes(x=score)) + geom_histogram(data=subset(pten1_no_missense,class == "nonsense"), fill = "red", alpha = 0.5, binwidth=.01) + geom_histogram(data=subset(pten1_no_missense,class == "synonymous"), fill = "blue", alpha = 0.5, binwidth=.01)
+ggplot(pten1_no_missense, aes(x=score)) + geom_histogram(data=subset(pten1_no_missense,class == "nonsense"), fill = "red", alpha = 0.5, binwidth=.01) + geom_histogram(data=subset(pten1_no_missense,class == "synonymous"), fill = "blue", alpha = 0.5, binwidth=.01) + theme_bw()
 
-ggplot(tpmt1_synon, aes(x=score)) + geom_histogram(binwidth=.01, colour="red", fill="white")
-ggplot(tpmt1_nonsense, aes(x=score)) + geom_histogram(binwidth=.01, colour="blue", fill="white")
+ggplot(tpmt1_synon, aes(x=score)) + geom_histogram(binwidth=.01, colour="red", fill="white") + theme_bw()
+ggplot(tpmt1_nonsense, aes(x=score)) + geom_histogram(binwidth=.01, colour="blue", fill="white") + theme_bw()
 ```
 ```{r}
 #0.55
@@ -598,15 +576,15 @@ s_tail
 ```
 ```{r}
 #just in case there is a discernible pattern
-s_tail_pos <- ggplot(s_tail, aes(x=position, y=score, colour=secondary_struct))+ geom_point(size=.3) + scale_x_continuous(minor_breaks = seq(0, 405, 5)) + scale_color_manual(values=c("#FF4848", "#00C853", "#5757FF", "#A9A9A9")) +ylab("VAMP-seq score")+xlab("Position in PTEN")+labs(colour="Secondary Structure")+ggtitle("PTEN synonymous variant tail scores in relation to protein structure") + geom_vline(xintercept=47, color="black", size=.1) + geom_vline(xintercept=78, color="black", size=.1) + geom_vline(xintercept=122.5, color="black", size=.1) + geom_vline(xintercept=140, color="black", size=.1) + geom_vline(xintercept=165, color="black", size=.1) + geom_vline(xintercept=194, color="black", size=.1) + geom_vline(xintercept=209, color="black", size=.1)
+s_tail_pos <- ggplot(s_tail, aes(x=position, y=score, colour=secondary_struct))+ geom_point(size=.3) + scale_x_continuous(minor_breaks = seq(0, 405, 5)) + scale_color_manual(values=c("#FF4848", "#00C853", "#5757FF", "#A9A9A9")) +ylab("VAMP-seq score")+xlab("Position in PTEN")+labs(colour="Secondary Structure")+ggtitle("PTEN synonymous variant tail scores in relation to protein structure") + geom_vline(xintercept=47, color="black", size=.1) + geom_vline(xintercept=78, color="black", size=.1) + geom_vline(xintercept=122.5, color="black", size=.1) + geom_vline(xintercept=140, color="black", size=.1) + geom_vline(xintercept=165, color="black", size=.1) + geom_vline(xintercept=194, color="black", size=.1) + geom_vline(xintercept=209, color="black", size=.1) + theme_bw()
 plot(s_tail_pos)
 
 #help visualizing NMD rules
-n_tail_pos <- ggplot(n_tail, aes(x=position, y=score, colour=secondary_struct))+ geom_point(size=.3) + scale_x_continuous(minor_breaks = seq(0, 405, 5)) + scale_color_manual(values=c("#FF4848", "#00C853", "#5757FF", "#A9A9A9")) +ylab("VAMP-seq score")+xlab("Position in PTEN")+labs(colour="Secondary Structure")+ggtitle("PTEN nonsense variant tail scores in relation to protein structure") + geom_vline(xintercept=47, color="black", size=.1) + geom_vline(xintercept=78, color="black", size=.1) + geom_vline(xintercept=122.5, color="black", size=.1) + geom_vline(xintercept=140, color="black", size=.1) + geom_vline(xintercept=165, color="black", size=.1) + geom_vline(xintercept=194, color="black", size=.1) + geom_vline(xintercept=209, color="black", size=.1)
+n_tail_pos <- ggplot(n_tail, aes(x=position, y=score, colour=secondary_struct))+ geom_point(size=.3) + scale_x_continuous(minor_breaks = seq(0, 405, 5)) + scale_color_manual(values=c("#FF4848", "#00C853", "#5757FF", "#A9A9A9")) +ylab("VAMP-seq score")+xlab("Position in PTEN")+labs(colour="Secondary Structure")+ggtitle("PTEN nonsense variant tail scores in relation to protein structure") + geom_vline(xintercept=47, color="black", size=.1) + geom_vline(xintercept=78, color="black", size=.1) + geom_vline(xintercept=122.5, color="black", size=.1) + geom_vline(xintercept=140, color="black", size=.1) + geom_vline(xintercept=165, color="black", size=.1) + geom_vline(xintercept=194, color="black", size=.1) + geom_vline(xintercept=209, color="black", size=.1) + theme_bw()
 plot(n_tail_pos)
 ```
 
-```{r}
+```{r include=FALSE}
 s_tail$prob_AG_GT <- c(0, 1/6, 1/2, 0, 1/2, 1/6)
 s_tail$prob_titv <- c(0, 2/3, 2/3, 0, 2/3, 1/3)
 ggplot(n_tail, aes(x=position,y=score)) + geom_point() + geom_smooth(method = "lm")
@@ -620,7 +598,7 @@ s_rsq
 #no relationship...
 ```
 
-```{r}
+```{r include=FALSE}
 # pten1_proc_wt$secondary_struct <- ifelse(is.na(pten1_proc_wt$helix), "unknown",
 #                         ifelse(pten1_proc_wt$helix==1, "helix",
 #                         ifelse(pten1_proc_wt$sheet==1, "sheet",
@@ -674,7 +652,7 @@ s_rsq
 # e9_s = 89725044
 # e9_e = 89725229
 ```
-```{r}
+```{r include=FALSE}
 
 gs_ls()
 tpmt_ruddle <- gs_title("TPMT_ruddle")
@@ -697,13 +675,13 @@ tpmt1_proc_ess <- tpmt1_proc_wt[,c(1,2,3,5,6,7,30,32,80)]
 tpmt_merge <- merge(tpmt1_proc_ess, tpmt_essential, by="variant")
 
 #comparing abundance scores with various scores in dbNSFP (contains annotations of all potential non-synonymous single-nucleotide variants (nsSNVs) in the human genome)
-tpmt_cor1 <- ggplot(tpmt_merge, aes(x=score, y=as.numeric(SIFT_score)))+ geom_point(alpha = 0.2) + xlab("VAMP-seq score")+ylab("SIFT score")+ggtitle("1")
-tpmt_cor1.5 <- ggplot(tpmt_merge, aes(x=score, y=as.numeric(SIFT_converted_rankscore)))+ geom_point(alpha = 0.2) + xlab("VAMP-seq score")+ylab("SIFT converted rankscore")+ggtitle("1.5")
-tpmt_cor5 <- ggplot(tpmt_merge, aes(x=score, y=CADD_raw_rankscore))+ geom_point(alpha = 0.2) + xlab("VAMP-seq score")+ylab("CADD raw rankscore")+ggtitle("5")
-tpmt_cor2 <- ggplot(tpmt_merge, aes(x=score, y=as.numeric(Polyphen2_HDIV_score)))+ geom_point(alpha = 0.2) + xlab("VAMP-seq score")+ylab("Polyphen2 HDIV score")+ggtitle("2")
-tpmt_cor3 <- ggplot(tpmt_merge, aes(x=score, y=as.numeric(Polyphen2_HVAR_score)))+ geom_point(alpha = 0.2) + xlab("VAMP-seq score")+ylab("Polyphen2 HVAR score")+ggtitle("3")
-tpmt_cor2.5 <- ggplot(tpmt_merge, aes(x=score, y=as.numeric(Polyphen2_HDIV_rankscore)))+ geom_point(alpha = 0.2) + xlab("VAMP-seq score")+ylab("Polyphen2 HDIV rankscore")+ggtitle("2.5")
-tpmt_cor3.5 <- ggplot(tpmt_merge, aes(x=score, y=as.numeric(Polyphen2_HVAR_rankscore)))+ geom_point(alpha = 0.2) + xlab("VAMP-seq score")+ylab("Polyphen2 HVAR rankscore")+ggtitle("3.5")
+tpmt_cor1 <- ggplot(tpmt_merge, aes(x=score, y=as.numeric(SIFT_score)))+ geom_point(alpha = 0.2) + xlab("VAMP-seq score")+ylab("SIFT score")+ggtitle("1") + theme_bw()
+tpmt_cor1.5 <- ggplot(tpmt_merge, aes(x=score, y=as.numeric(SIFT_converted_rankscore)))+ geom_point(alpha = 0.2) + xlab("VAMP-seq score")+ylab("SIFT converted rankscore")+ggtitle("1.5") + theme_bw()
+tpmt_cor5 <- ggplot(tpmt_merge, aes(x=score, y=CADD_raw_rankscore))+ geom_point(alpha = 0.2) + xlab("VAMP-seq score")+ylab("CADD raw rankscore")+ggtitle("5") + theme_bw()
+tpmt_cor2 <- ggplot(tpmt_merge, aes(x=score, y=as.numeric(Polyphen2_HDIV_score)))+ geom_point(alpha = 0.2) + xlab("VAMP-seq score")+ylab("Polyphen2 HDIV score")+ggtitle("2") + theme_bw()
+tpmt_cor3 <- ggplot(tpmt_merge, aes(x=score, y=as.numeric(Polyphen2_HVAR_score)))+ geom_point(alpha = 0.2) + xlab("VAMP-seq score")+ylab("Polyphen2 HVAR score")+ggtitle("3") + theme_bw()
+tpmt_cor2.5 <- ggplot(tpmt_merge, aes(x=score, y=as.numeric(Polyphen2_HDIV_rankscore)))+ geom_point(alpha = 0.2) + xlab("VAMP-seq score")+ylab("Polyphen2 HDIV rankscore")+ggtitle("2.5") + theme_bw()
+tpmt_cor3.5 <- ggplot(tpmt_merge, aes(x=score, y=as.numeric(Polyphen2_HVAR_rankscore)))+ geom_point(alpha = 0.2) + xlab("VAMP-seq score")+ylab("Polyphen2 HVAR rankscore")+ggtitle("3.5") + theme_bw()
 
 #CADD_phred not worth
 
@@ -716,30 +694,40 @@ plot(tpmt_cor2.5)
 plot(tpmt_cor3.5)
 ```
 ```{r}
-TPMT_abun_CADD <- ggplot(tpmt_merge, aes(x=abundance_class, y=CADD_raw_rankscore)) + geom_violin(draw_quantiles = c( 0.5))+ylab("CADD raw rankscore")+xlab("Abundance Class")
+TPMT_abun_CADD <- ggplot(tpmt_merge, aes(x=abundance_class, y=CADD_raw_rankscore)) + geom_violin(draw_quantiles = c( 0.5))+ylab("CADD raw rankscore")+xlab("Abundance Class") + theme_bw()
 plot(TPMT_abun_CADD)
 
-TPMT_abun_SIFT_conv <- ggplot(tpmt_merge, aes(x=abundance_class, y=as.numeric(SIFT_converted_rankscore))) + geom_violin(draw_quantiles = c(0.5))+ylab("SIFT conv rankscore")+xlab("Abundance Class")
+TPMT_abun_SIFT_conv <- ggplot(tpmt_merge, aes(x=abundance_class, y=as.numeric(SIFT_converted_rankscore))) + geom_violin(draw_quantiles = c(0.5))+ylab("SIFT conv rankscore")+xlab("Abundance Class") + theme_bw()
 plot(TPMT_abun_SIFT_conv)
 
-TPMT_abun_POLY <- ggplot(tpmt_merge, aes(x=abundance_class, y=as.numeric(Polyphen2_HDIV_rankscore))) + geom_violin(draw_quantiles = c( 0.5))+ylab("Polyphen2 HDIV rankscore")+xlab("Abundance Class")
+TPMT_abun_POLY <- ggplot(tpmt_merge, aes(x=abundance_class, y=as.numeric(Polyphen2_HDIV_rankscore))) + geom_violin(draw_quantiles = c( 0.5))+ylab("Polyphen2 HDIV rankscore")+xlab("Abundance Class") + theme_bw()
 plot(TPMT_abun_POLY)
 
-TPMT_abun_POLY1 <- ggplot(tpmt_merge, aes(x=abundance_class, y=as.numeric(Polyphen2_HVAR_rankscore))) + geom_violin(draw_quantiles = c( 0.5))+ylab("Polyphen2 HVAR rankscore")+xlab("Abundance Class")
+TPMT_abun_POLY1 <- ggplot(tpmt_merge, aes(x=abundance_class, y=as.numeric(Polyphen2_HVAR_rankscore))) + geom_violin(draw_quantiles = c( 0.5))+ylab("Polyphen2 HVAR rankscore")+xlab("Abundance Class") + theme_bw()
 plot(TPMT_abun_POLY1)
 ```
 ```{r}
 
-Pred_abun_SIFT <- ggplot(tpmt_merge, aes(abundance_class)) + geom_bar(aes(fill = SIFT_pred)) + ggtitle("Abundance class vs SIFT prediction of Damaging or Tolerated")
+Pred_abun_SIFT <- ggplot(tpmt_merge, aes(abundance_class)) + geom_bar(aes(fill = SIFT_pred)) + ggtitle("Abundance class vs SIFT prediction of Damaging or Tolerated") + theme_bw()
 plot(Pred_abun_SIFT)
 
 trial_sep <- tpmt_merge[c(21,23,24,26)]
 tpmt_merge_expand <- separate_rows(tpmt_merge, c("Polyphen2_HDIV_score", "Polyphen2_HDIV_pred", "Polyphen2_HVAR_score", "Polyphen2_HVAR_pred"))
 
-Pred_abun_HVAR <- ggplot(tpmt_merge_expand, aes(abundance_class)) + geom_bar(aes(fill = Polyphen2_HVAR_pred)) + ggtitle("Abundance class vs Polyphen2 HVAR predictions") + labs(subtitle = "D: Probably Damaging, P: Possibly Damaging, B: Benign")
+Pred_abun_HVAR <- ggplot(tpmt_merge_expand, aes(abundance_class)) + geom_bar(aes(fill = Polyphen2_HVAR_pred)) + ggtitle("Abundance class vs Polyphen2 HVAR predictions") + labs(subtitle = "D: Probably Damaging, P: Possibly Damaging, B: Benign") + theme_bw()
 plot(Pred_abun_HVAR)
 
 ```
 
+```{r}
+#creation of b-score text files for pymol use
+pten_pymol <- summarySE(pten1_data, measurevar="score", groupvars="position", na.rm=TRUE)
+#score[404] is wt
+write.table(pten_pymol$score[1:403], "pten_mean_scores_pymol.txt", sep="\n", row.names=F, col.names=F, na = "NaN")
+
+tpmt_pymol <- summarySE(tpmt1_data, measurevar="score", groupvars="position", na.rm=TRUE)
+#score[404] is wt
+write.table(tpmt_pymol$score[1:245], "tpmt_mean_scores_pymol.txt", sep="\n", row.names=F, col.names=F, na = "NaN")
+```
 
 
