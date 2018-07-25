@@ -75,7 +75,10 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script type="text/javascript">
-        // file is lengthy and repetitive and unreadable, very much a work in progress
+
+        url = '/api/alyssa';
+        var colNames;
+
 
         google.charts.load('current', {'packages':['corechart', 'controls']});
       //  google.charts.setOnLoadCallback(drawDashboard);
@@ -87,9 +90,24 @@
         google.charts.setOnLoadCallback(drawCollab5);
         google.charts.setOnLoadCallback(drawCollab6);
         google.charts.setOnLoadCallback(drawChartAll);
+         
+//        console.log("above retrieveCol");
+//        function dud() {
+//        var retrieveCol = $.ajax({
+//                url: url,               
+//                type: 'POST',
+//                success: function(data){
+//                        var parsedData = JSON.parse(data);
+//                        colNames = parsedData.col_names; 
+//                        console.log("colNames set");
+//                        console.log(colNames);
+//                        }
+//                });
+//         }
+//        console.log("below retrieveCol");
+//        console.log(colNames);
+        var nullFunc = function() {return null;};
 
-
-        url = '/api/alyssa';
         function drawDashboard() {
         
                 //url = '/api/alyssa';
@@ -146,36 +164,31 @@
                 });
         }
 
-        //hardcoded column categories, convert later
-        var columns0 = [
-                {type: 'string'}, 
-                {type: 'string', visible: false}, 
-                {type: 'number', color: 'blue', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'green', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'purple', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'pink', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'brown', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'red', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'blue', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'yellow', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'purple', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'black', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'orange', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'green', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'red', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'black', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'pink', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'orange', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'brown', disabledColor: 'grey', visible: false},
-        ];
-        var nullFunc = function() {return null;};
-        
+        var yDefaultsA = [];
+        var cSetUpA = true;
+        var columnsA;
+
         function drawChartAll() {
         var chart, chartData, view;
                 var xhr = $.ajax({
                         url: url,
                         type: 'POST',
                         success: function(data){
+                          if (cSetUpA == true) {
+                                var colNames = JSON.parse(data).col_names;
+                                var yDefaultsInd = yDefaultsA.map(c => colNames.indexOf(c));
+                                columnsA = JSON.parse(data).cols;
+                                for (var i = 0; i < colNames.length; i++) {
+                                        if (yDefaultsInd.includes(i)) {
+                                                columnsA[i].visible = true;
+                                        } else {
+                                                columnsA[i].visible = false;
+                                        }
+                                }
+                                cSetUpA = false;
+
+                          }
+
                           if (!chart) {
                           chartData = new google.visualization.DataTable(data);
                           view = new google.visualization.DataView(chartData);
@@ -184,25 +197,25 @@
                           google.visualization.events.addListener(chart, 'click', function(target) {
                                 if (target.targetID.match(/^legendentry#\d+$/)) {
                                         var index = parseInt(target.targetID.slice(12))+2;
-                                        columns0[index].visible = !columns0[index].visible;
+                                        columnsA[index].visible = !columnsA[index].visible;
                                         drawChartAll();
                                 }
                           });
                           }
                           var visibleColumnIndices = [0];
                           var colors = [];
-                          for (var i = 1; i < columns0.length; i++) {
+                          for (var i = 1; i < columnsA.length - 2; i++) {
                             //index 1 is the company column
                             if (i != 1) {
-                                if (columns0[i].visible) {
-                                        colors.push(columns0[i].color);
+                                if (columnsA[i].visible) {
+                                        colors.push(columnsA[i].color);
                                         visibleColumnIndices.push(i);
                                 }
                                 else {
-                                        colors.push(columns0[i].disabledColor);
+                                        colors.push(columnsA[i].disabledColor);
                                         visibleColumnIndices.push({
                                                 calc: nullFunc,
-                                                type: columns0[i].type,
+                                                type: columnsA[i].type,
                                         });
                                 }
                             }
@@ -418,29 +431,11 @@
                 });
         }
 */
-        var nullFunc = function() {return null;};
-        //can be WAY simplified later... depending on whether we want to use disabledColor functionality
-        //hardcoded
-        var columns1 = [
-                {type: 'string', visible: false}, 
-                {type: 'string', visible: false}, 
-                {type: 'number', color: 'green', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'green', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'purple', disabledColor: 'grey', visible: true}, 
-                {type: 'number', color: 'pink', disabledColor: 'grey', visible: true}, 
-                {type: 'number', color: 'brown', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'red', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'blue', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'yellow', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'purple', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'black', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'orange', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'green', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'red', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'black', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'pink', disabledColor: 'grey', visible: false}, 
-                {type: 'number', color: 'orange', disabledColor: 'grey', visible: false}, 
-        ];
+
+        //yDefaults = metrics which will be shown on graph by default
+        var yDefaults1 = ["mean_target_coverage", "median_target_coverage"];
+        var cSetUp1 = true;
+        var columns1;
         
         function drawCollab1() {
         var chart, chartData, view;
@@ -448,6 +443,22 @@
                         url: url,
                         type: 'POST',
                         success: function(data){
+//                          console.log(data);
+                          //setting up columns1, adding 'visible' field
+                          if (cSetUp1 == true) {
+                                var colNames = JSON.parse(data).col_names;
+                                var yDefaultsInd = yDefaults1.map(c => colNames.indexOf(c));
+                                columns1 = JSON.parse(data).cols;
+                                for (var i = 0; i < colNames.length; i++) {
+                                        if (yDefaultsInd.includes(i)) {
+                                                columns1[i].visible = true;
+                                        } else {
+                                                columns1[i].visible = false;
+                                        }
+                                }
+                                cSetUp1 = false;
+
+                          }
                           if (!chart) {
                           chartData = new google.visualization.DataTable(data);
                           view = new google.visualization.DataView(chartData);
@@ -456,7 +467,7 @@
                           google.visualization.events.addListener(chart, 'click', function(target) {
                                 if (target.targetID.match(/^legendentry#\d+$/)) {
                                         var index = parseInt(target.targetID.slice(12))+2;
-                                        console.log(index);
+//                                        console.log(index);
                                         columns1[index].visible = !columns1[index].visible;
                                         drawCollab1();
                                 }
@@ -464,7 +475,7 @@
                           }
                           var visibleColumnIndices = [0];
                           var colors = [];
-                          for (var i = 2; i < columns1.length; i++) {
+                          for (var i = 2; i < columns1.length - 2; i++) {
                             //index 1 is the company column
                             if (i != 1) {
                                 if (columns1[i].visible) {
@@ -479,7 +490,7 @@
                                         });
                                 }
                             }
-                            console.log(visibleColumnIndices);
+//                            console.log(visibleColumnIndices);
                           };
                           view.setColumns(visibleColumnIndices);
                           var curve_options = {
@@ -540,7 +551,10 @@
                 {type: 'number', color: 'black', disabledColor: 'grey', visible: false}, 
                 {type: 'number', color: 'pink', disabledColor: 'grey', visible: false}, 
                 {type: 'number', color: 'orange', disabledColor: 'grey', visible: true}, 
+                {type: 'string', color: 'pink', disabledColor: 'grey', visible: false}, 
+                {type: 'string', color: 'orange', disabledColor: 'grey', visible: false},
         ];
+
         function drawCollab2_1() {
         var chart, chartData, view;
                 var xhr = $.ajax({
@@ -555,7 +569,7 @@
                           google.visualization.events.addListener(chart, 'click', function(target) {
                                 if (target.targetID.match(/^legendentry#\d+$/)) {
                                         var index = parseInt(target.targetID.slice(12))+2;
-                                        console.log(index);
+//                                        console.log(index);
                                         columns2[index].visible = !columns2[index].visible;
                                         drawCollab2();
                                 }
@@ -578,7 +592,7 @@
                                         });
                                 }
                             }
-                            console.log(visibleColumnIndices);
+//                            console.log(visibleColumnIndices);
                           };
                           view.setColumns(visibleColumnIndices);
 
@@ -619,6 +633,8 @@
                         }
                 });
         }
+
+
         function drawCollab2() {
         
                 var xhr = $.ajax({
