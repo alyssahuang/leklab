@@ -16,10 +16,10 @@ def alyssa(request):
         for col in columns:
                 try:
                         float(individual_rows[0].get(col))
-                        col_json.append({'type': 'number'})
+                        col_json.append({'label': str(col), 'type': 'number'})
                 #need to figure out why ValueError exception is not being caught
                 except:
-                        col_json.append({'type': 'string'})
+                        col_json.append({'label': str(col), 'type': 'string'})
         row_json = []
         trial_row = []
 

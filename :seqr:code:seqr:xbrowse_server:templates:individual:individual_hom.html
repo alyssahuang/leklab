@@ -881,7 +881,25 @@
                         }
                 });
         }
-
+//        //create trigger to resizeEnd event: resets dropdown options after rescaling,
+//        //calls for removing height,weight from options, which makes default graph ugly (will require fiddling)
+//        $(window).resize(function() {
+//                if(this.resizeTO) clearTimeout(this.resizeTO);
+//                this.resizeTO = setTimeout(function() {
+//                        $(this).trigger('resizeEnd');
+//                }, 500);
+//        });
+//        
+//        //redraw graph when window resize is completed  
+//        $(window).on('resizeEnd', function() {
+//                drawCollab1();
+//                drawCollab2();
+//                drawCollab3();
+//                drawCollab4();
+//                drawCollab5();
+//                drawCollab6();
+//                drawChartAll();
+//        });
 
     </script>
 {% endblock %}
