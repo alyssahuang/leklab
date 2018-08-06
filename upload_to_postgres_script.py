@@ -1,53 +1,57 @@
-from xbrowse_server.api import utils as api_utils
-from xbrowse_server.api import forms as api_forms
-from xbrowse_server.mall import get_reference, get_datastore, get_mall
-from xbrowse_server.search_cache import utils as cache_utils
-#from xbrowse_server.decorators import log_request
-#from xbrowse_server.server_utils import JSONResponse
-import utils
-#from xbrowse.variant_search import cohort as cohort_search
-#from xbrowse import Variant
-#from xbrowse.analysis_modules.mendelian_variant_search import MendelianVariantSearchSpec
-#from xbrowse.core import displays as xbrowse_displays
-from xbrowse_server import server_utils
-from . import basicauth
-from xbrowse_server import user_controls
-from django.utils import timezone
-
-#from xbrowse_server.phenotips.reporting_utilities import phenotype_entry_metric_for_individual
-#from xbrowse_server.base.models import ANALYSIS_STATUS_CHOICES
-#import requests
-#from django.contrib.admin.views.decorators import staff_member_required
-import pymongo
+#!/usr/bin/env python
+#from sqlalchemy import create_engine
+import psycopg2
+from psycopg2.extensions import AsIs
+from django.conf import settings
 
 from django.db import connection
-import csv
+#import csv
 from argparse import ArgumentParser
+import pandas
+
+#test_connection = psycopg2.connect(dbname="seqrdb", user="postgres")
+#test_connection = postgresql+psycopg2://postgres: 
+cursor = connection.cursor()
 
 #Grab datatable name and csv/tsv from command line
 parser = ArgumentParser()
-parser.add_argument('dt', type=string, help='the datatable in postgres to update')
-parser.add_argument('fname', metavar='FILE', help='the csv/tsv to upload')
-args = parser.parse_args('inOrder', type=boolean, default=false, help='if the columns are in the correct order? (default false)')
+parser.add_argument('dt', help='the datatable in postgres to update')
+parser.add_argument('fname', help='the csv/tsv to upload')
+#parser.add_argument('inOrder', default=False, help='if the columns are in the correct order (default False)')
+args = parser.parse_args()
 
+#attempt with pandas
+###
 #look into header
-df = DataFrame.read_csv(args.fname, header=0)
+#df = pandas.read_csv(args.fname, header=0)
+#cHeaders = list(df.columns.values)
+#print(cHeaders)
+####
+#attempt3
+#test_engine = create_engine("postgresql://postgres@localhost/seqrdb")
+#with test_engine.connect() as conn, conn.begin():
+#        df.to_sql(name=args.dt, con=conn, if_exists='append')
+
+#attempt2
+#df.to_sql(name=args.dt, con=test_connection, if_exists='append')
+
+#attempt1
+#df.to_sql(name=args.dt, con=connection, if_exists='append')
+
+#cursor method
+df = pandas.read_csv(args.fname, header=0)
 cHeaders = list(df.columns.values)
-df.to_sql(args.dt, connection, if_exists='append')
 
-
-#Connect to Postgres
-#cursor = connection.cursor()
+cursor.execute("copy %s from %s with (format csv, header)", (AsIs(args.dt), args.fname))
 
 #with open(args.fname) as f:
-	
-#	f = csv.reader(f, delimiter='\t')
-#	next(f) # skipping the header
-#	for line in r:
+
+#       f = csv.reader(f, delimiter='\t')
+#       next(f) # skipping the header
+#       for line in r:
 
 
-	#tsv pre-processing (assumes columns in order of postgres datatable rn) (assumes no missing or additional columns yet) 
+        #tsv pre-processing (assumes columns in order of postgres datatable rn) (assumes no missing or additional columns yet) 
 
-#	cursor.execute("COPY (%s) ((%s))", (dt,))
-
+#       cursor.execute("COPY (%s) ((%s))", (dt,))
 
