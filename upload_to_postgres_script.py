@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+
+#Testing Instructions
+#in '/seqr/code/seqr/' 
+#run 'python manage.py shell' 
+#run 'subprocess.call(["/home/ml2529/seqr/code/seqr/xbrowse_server/upload_to_postgres_script.py", "gc_3", "/home/ml2529/seqr/code/seqr/xbrowse_server/temp2.csv"])'
+
 from django.conf import settings
 from django.db import connection
 from argparse import ArgumentParser
