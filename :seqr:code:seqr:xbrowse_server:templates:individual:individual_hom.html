@@ -42,6 +42,14 @@
         <div id="collab1"></div>
     </div>
     -->
+    <!--
+    <div class="chartWithMarkerOverlay">
+        <div id="collab1"></div>
+        <div class="overlay-marker">
+            <img src="http://www.pngmart.com/?p=40913" height="50">
+        </div>
+    </div>
+    -->
     <div id="collab1"></div>
     <div id="dashboard_div2">
         <div id="filter_div2"></div>
@@ -64,6 +72,7 @@
         <div id="collab6"></div>
     </div>
     <div id="chart_all_div"></div>
+    <div id="chart_stuff"></div>
     <!---->
 {% endblock %}
 
@@ -90,6 +99,7 @@
         google.charts.setOnLoadCallback(drawCollab5);
         google.charts.setOnLoadCallback(drawCollab6);
         google.charts.setOnLoadCallback(drawChartAll);
+        google.charts.setOnLoadCallback(drawStuff);
          
 //        console.log("above retrieveCol");
 //        function dud() {
@@ -443,7 +453,6 @@
                         url: url,
                         type: 'POST',
                         success: function(data){
-//                          console.log(data);
                           //setting up columns1, adding 'visible' field
                           if (cSetUp1 == true) {
                                 var colNames = JSON.parse(data).col_names;
@@ -460,24 +469,26 @@
 
                           }
                           if (!chart) {
-                          chartData = new google.visualization.DataTable(data);
-                          view = new google.visualization.DataView(chartData);
-//                          view.setColumns([0,1,2,4,5]);
-                          chart = new google.visualization.ComboChart(document.getElementById('collab1'));
-                          google.visualization.events.addListener(chart, 'click', function(target) {
-                                if (target.targetID.match(/^legendentry#\d+$/)) {
-                                        var index = parseInt(target.targetID.slice(12))+2;
-//                                        console.log(index);
-                                        columns1[index].visible = !columns1[index].visible;
-                                        drawCollab1();
-                                }
-                          });
+                                  chartData = new google.visualization.DataTable(data);
+//                                  chartData.insertColumn(19, 'number', '85% cutoff');
+//                                  for (var r=0; r < chartData.getNumberOfRows(); r++) {
+//                                          chartData.setValue(r, 19, 0.85);
+//                                  }
+//                                  columns1.splice(19, 0, {type: "number", label: "85% cutoff", visible: true});
+                                  view = new google.visualization.DataView(chartData);
+                                  chart = new google.visualization.ComboChart(document.getElementById('collab1'));
+                                  google.visualization.events.addListener(chart, 'click', function(target) {
+                                          if (target.targetID.match(/^legendentry#\d+$/)) {
+                                                 var index = parseInt(target.targetID.slice(12))+2;
+                                                 columns1[index].visible = !columns1[index].visible;
+                                                 drawCollab1();
+                                           }
+                                  });
                           }
                           var visibleColumnIndices = [0];
                           var colors = [];
-                          for (var i = 2; i < columns1.length - 2; i++) {
+                          for (var i = 2; i < columns1.length - 2; i++) { //-3 if you're trying to add the stupid line in
                             //index 1 is the company column
-                            if (i != 1) {
                                 if (columns1[i].visible) {
                                         colors.push(columns1[i].color);
                                         visibleColumnIndices.push(i);
@@ -489,31 +500,30 @@
                                                 type: columns1[i].type,
                                         });
                                 }
-                            }
-//                            console.log(visibleColumnIndices);
                           };
                           view.setColumns(visibleColumnIndices);
                           var curve_options = {
                                   height: 800,
                                   width: 1670,
                                   series: {
-                                          0: {type: 'line', color: '#C78912', curveType: 'function', targetAxisIndex: 0, visibleInLegend: false},//labelInLegend: "dbsnp ins del ratio"},
-                                          1: {type: 'bars', color: '#024579', targetAxisIndex: 1, visibleInLegend: false},//labelInLegend: "singletons"},
-                                          2: {type: 'line', lineWidth: 0.3, color: '#DEBA75', targetAxisIndex: 0, labelInLegend: "mean target coverage"},
-                                          3: {type: 'line', lineWidth: 0.3, color: '#C78912', targetAxisIndex: 0, labelInLegend: "median target coverage"}, 
-                                          4: {type: 'line', lineWidth: 0.3, color: '#96B1C7', targetAxisIndex: 1, labelInLegend: "pct target bases 10x"},
-                                          5: {type: 'line', lineWidth: 0.3, color: '#41749B', targetAxisIndex: 1, labelInLegend: "pct target bases 20x"},
-                                          6: {type: 'line', lineWidth: 0.3, color: '#024579', targetAxisIndex: 1, labelInLegend: "pct target bases 30x"},
-                                          7: {type: 'line', color: '#2E8B57', curveType: 'function', targetAxisIndex: 1, visibleInLegend: false},//labelInLegend: "pct_chimeras"}, //2
-                                          8: {type: 'line', color: '#ED2939', curveType: 'function', targetAxisIndex: 1, visibleInLegend: false},//labelInLegend: "contamination"},//2
-                                          9: {type: 'line', color: '#90A4E8', curveType: 'function', targetAxisIndex: 1, visibleInLegend: false},//labelInLegend: "het_homvar_ratio"},//3
-                                          10: {type: 'line', color: '#ECB4A5', curveType: 'function', targetAxisIndex: 0, visibleInLegend: false},//labelInLegend: "total_snps"},//change to 1000s
-                                          11: {type: 'line', color: '#F6D5D0', curveType: 'function', targetAxisIndex: 1, visibleInLegend: false},//labelInLegend: "pct_dbsnp"}, 
-                                          12: {type: 'line', color: '#81A2BC', curveType: 'function', targetAxisIndex: 1, visibleInLegend: false},//labelInLegend: "dbsnp_titv"},//3
-                                          13: {type: 'line', color: '#ABC1D2', curveType: 'function', targetAxisIndex: 1, visibleInLegend: false},//labelInLegend: "novel_titv"},//3
-                                          14: {type: 'line', color: '#D09D3A', curveType: 'function', targetAxisIndex: 0, visibleInLegend: false},//labelInLegend: "total_indels"},
-                                          15: {type: 'line', color: '#DAB061', curveType: 'function', targetAxisIndex: 1, visibleInLegend: false},//labelInLegend: "pct_dbsnp_indels"},  
-                                          16: {type: 'line', color: '#E3C488', curveType: 'function', targetAxisIndex: 1, visibleInLegend: false},//labelInLegend: "novel_ins_del_ratio"},
+                                          0: {type: 'line', lineWidth: 0.3, color: '#C78912', curveType: 'none', targetAxisIndex: 0, labelInLegend: "dbsnp ins del ratio", visibleInLegend: false},
+                                          1: {type: 'bars', lineWidth: 0.3, color: '#024579', curveType: 'none', targetAxisIndex: 1, labelInLegend: "singletons", visibleInLegend: false},
+                                          2: {type: 'line', lineWidth: 0.3, color: '#DEBA75', curveType: 'none', targetAxisIndex: 0, labelInLegend: "mean target coverage", visibleInLegend: true},
+                                          3: {type: 'line', lineWidth: 0.3, color: '#C78912', curveType: 'none', targetAxisIndex: 0, labelInLegend: "median target coverage", visibleInLegend: true}, 
+                                          4: {type: 'line', lineWidth: 0.3, color: '#96B1C7', curveType: 'none', targetAxisIndex: 1, labelInLegend: "pct target bases 10x", visibleInLegend: true},
+                                          5: {type: 'line', lineWidth: 0.3, color: '#41749B', curveType: 'none', targetAxisIndex: 1, labelInLegend: "pct target bases 20x", visibleInLegend: true},
+                                          6: {type: 'line', lineWidth: 0.3, color: '#024579', curveType: 'none', targetAxisIndex: 1, labelInLegend: "pct target bases 30x", visibleInLegend: true},
+                                          7: {type: 'line', lineWidth: 0.3, color: '#2E8B57', curveType: 'none', targetAxisIndex: 1, labelInLegend: "pct_chimeras", visibleInLegend: false},
+                                          8: {type: 'line', lineWidth: 0.3, color: '#ED2939', curveType: 'none', targetAxisIndex: 1, labelInLegend: "contamination", visibleInLegend: false},
+                                          9: {type: 'line', lineWidth: 0.3, color: '#90A4E8', curveType: 'none', targetAxisIndex: 1, labelInLegend: "het_homvar_ratio", visibleInLegend: false},
+                                          10: {type: 'line', lineWidth: 0.3, color: '#ECB4A5', curveType: 'none', targetAxisIndex: 0, labelInLegend: "total_snps", visibleInLegend: false},
+                                          11: {type: 'line', lineWidth: 0.3, color: '#F6D5D0', curveType: 'none', targetAxisIndex: 1, labelInLegend: "pct_dbsnp", visibleInLegend: false}, 
+                                          12: {type: 'line', lineWidth: 0.3, color: '#81A2BC', curveType: 'none', targetAxisIndex: 1, labelInLegend: "dbsnp_titv", visibleInLegend: false},
+                                          13: {type: 'line', lineWidth: 0.3, color: '#ABC1D2', curveType: 'none', targetAxisIndex: 1, labelInLegend: "novel_titv", visibleInLegend: false},
+                                          14: {type: 'line', lineWidth: 0.3, color: '#D09D3A', curveType: 'none', targetAxisIndex: 0, labelInLegend: "total_indels", visibleInLegend: false},
+                                          15: {type: 'line', lineWidth: 0.3, color: '#DAB061', curveType: 'none', targetAxisIndex: 1, labelInLegend: "pct_dbsnp_indels", visibleInLegend: false},  
+                                          16: {type: 'line', lineWidth: 0.3, color: '#E3C488', curveType: 'none', targetAxisIndex: 1, labelInLegend: "novel_ins_del_ratio", visibleInLegend: false},
+//                                          17: {type: 'line', lineWidth: 0.3, color: 'red', targetAxisIndex: 1, visibleInLegend: false},
                                   },
                                   legend: {position: 'top', maxLines: '2'},
                                   vAxes: {
@@ -526,6 +536,14 @@
                                   },
                                   pointsVisible: true,
                           };
+                          //overlay not bloody working
+//                          function placeMarker(dataTable) {
+//                                  var cli = this.getChartLayoutInterface();
+//                                  var chartArea = cli.getChartAreaBoundingBox();
+//                                  document.querySelector('.overlay-marker').style.top = Math.floor(cli.getYLocation(0.85)) + "px";
+//                                  document.querySelector('.overlay-marker').style.left = Math.floor(cli.getXLocation(5)) + "px";
+//                          };
+//                          google.visualization.events.addListener(chart, 'ready', placeMarker.bind(chart, chartData));
                           chart.draw(view, curve_options);
                         }
                 });
@@ -834,8 +852,59 @@
                        url: url,
                         type: 'POST',
                         success: function(data){
-                          //console.log(data);
                           var data = new google.visualization.DataTable(data);
+                          //contamination for each company
+                          var DeYiC = data.addColumn('number', 'DeYi Avg Contamination');
+                          var KangsooC = data.addColumn('number', 'Kangsoo Avg Contamination');
+                          var MygenoC = data.addColumn('number', 'Mygeno Avg Contamination');
+                          var dT = 0; var dC = 0;
+                          var kT = 0; var kC = 0;
+                          var mT = 0; var mC = 0;
+                          //chimeras for each company
+                          var DeYiCh = data.addColumn('number', 'DeYi Avg Chimera');
+                          var KangsooCh = data.addColumn('number', 'Kangsoo Avg Chimera');
+                          var MygenoCh = data.addColumn('number', 'Mygeno Avg Chimera');
+                          var dTh = 0; var dCh = 0;
+                          var kTh = 0; var kCh = 0;
+                          var mTh = 0; var mCh = 0;
+                          for (var r=0; r < data.getNumberOfRows(); r++) {
+//                                  console.log("in the first loop");
+                                  var company = data.getValue(r, 1);
+                                  var contam = Number(data.getValue(r, 10));
+                                  var chimer = Number(data.getValue(r, 9));
+                                  //column 1 should be company name
+                                  if (company == "DeYi") {
+                                          dT = dT + contam;
+                                          dC = dC + 1;
+                                          dTh = dTh + chimer;
+                                          dCh = dCh + 1;
+                                          console.log(dT);
+                                  } else if (company == "Kangsoo") {
+                                          kT = kT + contam;
+                                          kC = kC + 1;
+                                          kTh = kTh + chimer;
+                                          kCh = kCh + 1;
+                                  } else {
+                                          mT = mT + contam;
+                                          mC = mC + 1;
+                                          mTh = mTh + chimer;
+                                          mCh = mCh + 1;
+                                  }
+                          }
+                          for (var r=0; r < data.getNumberOfRows(); r++) {
+                                  var company = data.getValue(r, 1);
+                                  if (company == "DeYi") {
+                                          data.setValue(r, DeYiC, dT/dC);
+                                          data.setValue(r, DeYiCh, dTh/dCh);
+                                  } else if (company == "Kangsoo") {
+                                          data.setValue(r, KangsooC, kT/kC);
+                                          data.setValue(r, KangsooCh, kTh/kCh);
+                                  } else {
+                                          data.setValue(r, MygenoC, mT/mC);
+                                          data.setValue(r, MygenoCh, mTh/mCh);
+                                  }
+                          }
+                          console.log(data);
                           var view = new google.visualization.DataView(data);
                           var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div6'));
                           var dropDown = new google.visualization.ControlWrapper({
@@ -853,15 +922,43 @@
                                           width: 1500,
                                           series: {
                                                   0: {type: 'scatter', 
-                                                      //lineWidth: 0.5,
                                                       color: '#ED2939',
                                                       targetAxisIndex: 0,
                                                       labelInLegend: "contamination"},
                                                   1: {type: 'scatter', 
-                                                      //lineWidth: 0.5,
                                                       color: '#EEE117', 
                                                       targetAxisIndex: 1,
                                                       labelInLegend: "pct chimeras"},
+                                                  2: {type: 'line', 
+//                                                      lineWidth: 0.5,
+                                                      color: '#ED2939', 
+                                                      targetAxisIndex: 0,
+                                                      visibleInLegend: false},
+                                                  3: {type: 'line', 
+//                                                      lineWidth: 0.5,
+                                                      color: '#ED2939', 
+                                                      targetAxisIndex: 0,
+                                                      visibleInLegend: false},
+                                                  4: {type: 'line', 
+//                                                      lineWidth: 0.5,
+                                                      color: '#ED2939', 
+                                                      targetAxisIndex: 0,
+                                                      visibleInLegend: false},
+                                                  5: {type: 'line', 
+//                                                      lineWidth: 0.5,
+                                                      color: '#EEE117', 
+                                                      targetAxisIndex: 1,
+                                                      visibleInLegend: false},
+                                                  6: {type: 'line', 
+//                                                      lineWidth: 0.5,
+                                                      color: '#EEE117', 
+                                                      targetAxisIndex: 1,
+                                                      visibleInLegend: false},
+                                                  7: {type: 'line', 
+//                                                      lineWidth: 0.5,
+                                                      color: '#EEE117', 
+                                                      targetAxisIndex: 1,
+                                                      visibleInLegend: false},
                                           },
                                           vAxes: {
                                                   0: {title: 'contamination'},
@@ -875,12 +972,134 @@
 
                                   }
                           });
-                          chart1.setView({'columns': [0, 10, 9]}); 
+                          chart1.setView({'columns': [0, 10, 9, 21, 22, 23, 24, 25, 26]});
+                          //attempt to add averages 
+                          /*
+                          chart1.setView({'columns': [0, 10, 9, {
+                                type: 'string',
+                                label: 'deyi',
+                                calc: function(d,r) {
+                                        if (r<7) {
+                                                return ''
+                                        } else {
+                                                return 'not deyi'
+                                        }
+                                }
+                          }, {  type: 'string',
+                                label: 'kangsoo',
+                                calc: function(d,r) {
+                                        if (r>6) {
+                                                return ''
+                                        } else {
+                                                return 'not kangsoo'
+                                        }
+                                }
+                          }]}); 
+                          var groupDeYi = google.visualization.data.group(view, [21], [{
+                                column: 10,
+                                id: 'DeYi_avg',
+                                label: 'DeYi_avg',
+                                aggregation: google.visualization.data.avg,
+                                type: 'number'
+                          }]);
+                          var groupKangsoo = google.visualization.data.group(view, [22], [{
+                                column: 10
+                                id: 'Kangsoo_avg',
+                                label: 'Kangsoo_avg',
+                                aggregation: google.visualization.data.avg,
+                                type: 'number'
+                          }]);
+                          var dv = new google.visualization.DataView(data);
+                          dv.setColumns([0, 10, 9, {
+                                type: 'number',
+                                label: 'Deyi contamination avg',
+                                calc: function (dt, row) {
+                                        if (row<7) {
+                                                return groupDeYi.getValue(0, 1);
+                                        }
+                                }
+                          }, {  type: 'number',
+                                label: 'Kangsoo contamination avg',
+                                calc: function (dt, row) {
+                                        if (row>6) {
+                                                return groupKangsoo.getValue(0, 1);
+                                        }
+                                } 
+                          }]);
+                          */
                           dashboard.bind(dropDown, chart1);
                           dashboard.draw(view);
                         }
                 });
         }
+
+        function drawStuff() {
+           var data = new google.visualization.DataTable();
+           data.addColumn('string', 'Sample');
+           data.addColumn('number', 'mean_coverage');
+           data.addColumn('number', 'median_coverage');
+           data.addRows([
+               ['A', 3, 4],
+               ['A_F', 1, 5],
+               ['A_M', 1, 4],
+               ['B', 1, 1],
+               ['B_M', 2, 2]
+           ]);
+       
+           // Create a DataView that adds another column which is all the same (empty-string) to be able to aggregate on.
+           var viewWithKey = new google.visualization.DataView(data);
+           viewWithKey.setColumns([0, 1, 2, {
+               type: 'string',
+               label: '',
+               calc: function (d, r) {
+                   console.log(d.ng[1].label);
+                   return ''
+               }
+           }])
+       
+           // Aggregate the previous view to calculate the average. This table should be a single table that looks like:
+           // [['', AVERAGE]], so you can get the Average with .getValue(0,1)
+           var group = google.visualization.data.group(viewWithKey, [3], [{
+               column: 1,
+               id: 'avg',
+               label: 'average',
+               aggregation: google.visualization.data.avg,
+               'type': 'number'
+           }]);
+       
+           // Create a DataView where the third column is the average.
+           var dv = new google.visualization.DataView(data);
+           dv.setColumns([0, 1, 2, {
+               type: 'number',
+               label: 'average',
+               calc: function (dt, row) {
+                   return group.getValue(0, 1);
+               }
+           }]);
+       
+           // Set chart options
+           var options = {
+               'title': 'How Much Pizza I Ate Last Night',
+                   'width': 400,
+                   'height': 300,
+               seriesType: "bars",
+               series: {
+                   2: {
+                       type: "line",
+                       visibleInLegend: false
+                   }
+               },
+       
+               tooltip: {
+                   trigger: 'selection'
+               }
+           };
+       
+           // Instantiate and draw our chart, passing in some options.
+           var chart = new google.visualization.ComboChart(document.getElementById('chart_stuff'));
+           chart.draw(dv, options);
+        }
+
 //        //create trigger to resizeEnd event: resets dropdown options after rescaling,
 //        //calls for removing height,weight from options, which makes default graph ugly (will require fiddling)
 //        $(window).resize(function() {
