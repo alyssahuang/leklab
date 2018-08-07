@@ -1,10 +1,12 @@
 @csrf_exempt
 @login_required
 @log_request('alyssa')
-def alyssa(request):
+def alyssa(request, project_id):
+        #sql = """SELECT ValA FROM `%s` WHERE Val2 = '%s' AND Val3 = '%s'""" % (Val1, Val2, Val3)
         cursor = connection.cursor()
         #cursor.execute("SELECT * from gc_1")
-        cursor.execute("SELECT sample, company, dbsnp_ins_del_ratio, num_singletons, mean_target_coverage, median_target_coverage, pct_target_bases_10x, pct_target_bases_20x, pct_target_bases_30x, pct_chimeras, contamination, het_homvar_ratio, total_snps, pct_dbsnp, dbsnp_titv, novel_titv, total_indels, pct_dbsnp_indels, novel_ins_del_ratio, project_id, family_id FROM gc_2 ORDER BY company")
+        cursor.execute("SELECT sample, company, dbsnp_ins_del_ratio, num_singletons, mean_target_coverage, median_target_coverage, pct_target_bases_10x, pct_target_bases_20x, pct_target_bases_30x, pct_chimeras, contamination, het_homvar_ratio, total_snps, pct_dbsnp, dbsnp_titv, novel_titv, total_indels, pct_dbsnp_indels, novel_ins_del_ratio, project_id, family_id FROM gc_2 WHERE project_id = (%s) ORDER BY company", (project_id,))
+#        cursor.execute("SELECT sample, company, dbsnp_ins_del_ratio, num_singletons, mean_target_coverage, median_target_coverage, pct_target_bases_10x, pct_target_bases_20x, pct_target_bases_30x, pct_chimeras, contamination, het_homvar_ratio, total_snps, pct_dbsnp, dbsnp_titv, novel_titv, total_indels, pct_dbsnp_indels, novel_ins_del_ratio, project_id, family_id FROM gc_2 WHERE project_id = 'hui' ORDER BY company")
         columns = [col[0] for col in cursor.description]
         individual_rows = [dict(zip(columns, row)) for row in cursor.fetchall()]
         individuals_json = []
