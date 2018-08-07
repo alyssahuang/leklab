@@ -1,0 +1,33 @@
+# https://pymolwiki.org/index.php/Color#Reassigning_B-Factors_and_Coloring
+# To load structure 
+# Search structure from RCSB PDB (https://www.rcsb.org/) and obtain ID (short 4 alphanumerical like 1D5R)
+# on pymol command line
+fetch 1D5R
+
+# Coloring structure according to user spec
+# Create file with one column of values (one value for each amino acid)
+# ex: generating file in rstudio
+#summarySE to condense all abundance scores for each position into single mean
+pten_pymol <- summarySE(pten1_data, measurevar="score", groupvars="position", na.rm=TRUE)
+#score[404] is wt
+write.table(pten_pymol$score[1:403], "newBFactors.txt", sep="\n", row.names=F, col.names=F, na = "NaN")
+
+inFile = open("newBFactors.txt", 'r')
+
+# create the global, stored array
+newB = []
+
+# read the new B factors from file
+for line in inFile.readlines(): newB.append(float(line))
+
+# close the input file
+inFile.close()
+
+# clear out the old B Factors
+alter 1D5R, b=0.0
+
+# update the B Factors with new properties
+alter 1D5R and n. CA, b=newB.pop(0)
+
+# color the protein based on the new B Factors of the alpha carbons
+cmd.spectrum("b", "1D5R and n. CA")
