@@ -673,59 +673,8 @@
                        url: url,
                         type: 'POST',
                         success: function(data){
+                          //console.log(data);
                           var data = new google.visualization.DataTable(data);
-                          //contamination for each company
-                          var DeYiC = data.addColumn('number', 'DeYi Avg Contamination');
-                          var KangsooC = data.addColumn('number', 'Kangsoo Avg Contamination');
-                          var MygenoC = data.addColumn('number', 'Mygeno Avg Contamination');
-                          var dT = 0; var dC = 0;
-                          var kT = 0; var kC = 0;
-                          var mT = 0; var mC = 0;
-                          //chimeras for each company
-                          var DeYiCh = data.addColumn('number', 'DeYi Avg Chimera');
-                          var KangsooCh = data.addColumn('number', 'Kangsoo Avg Chimera');
-                          var MygenoCh = data.addColumn('number', 'Mygeno Avg Chimera');
-                          var dTh = 0; var dCh = 0;
-                          var kTh = 0; var kCh = 0;
-                          var mTh = 0; var mCh = 0;
-                          for (var r=0; r < data.getNumberOfRows(); r++) {
-//                                  console.log("in the first loop");
-                                  var company = data.getValue(r, 1);
-                                  var contam = Number(data.getValue(r, 10));
-                                  var chimer = Number(data.getValue(r, 9));
-                                  //column 1 should be company name
-                                  if (company == "DeYi") {
-                                          dT = dT + contam;
-                                          dC = dC + 1;
-                                          dTh = dTh + chimer;
-                                          dCh = dCh + 1;
-                                          console.log(dT);
-                                  } else if (company == "Kangsoo") {
-                                          kT = kT + contam;
-                                          kC = kC + 1;
-                                          kTh = kTh + chimer;
-                                          kCh = kCh + 1;
-                                  } else {
-                                          mT = mT + contam;
-                                          mC = mC + 1;
-                                          mTh = mTh + chimer;
-                                          mCh = mCh + 1;
-                                  }
-                          }
-                          for (var r=0; r < data.getNumberOfRows(); r++) {
-                                  var company = data.getValue(r, 1);
-                                  if (company == "DeYi") {
-                                          data.setValue(r, DeYiC, dT/dC);
-                                          data.setValue(r, DeYiCh, dTh/dCh);
-                                  } else if (company == "Kangsoo") {
-                                          data.setValue(r, KangsooC, kT/kC);
-                                          data.setValue(r, KangsooCh, kTh/kCh);
-                                  } else {
-                                          data.setValue(r, MygenoC, mT/mC);
-                                          data.setValue(r, MygenoCh, mTh/mCh);
-                                  }
-                          }
-                          console.log(data);
                           var view = new google.visualization.DataView(data);
                           var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div6'));
                           var dropDown = new google.visualization.ControlWrapper({
@@ -740,46 +689,18 @@
                                   containerId: 'collab6',
                                   options: {
                                           height: 700,
-                                          width: 1300,
+                                          width: 1500,
                                           series: {
                                                   0: {type: 'scatter', 
+                                                      //lineWidth: 0.5,
                                                       color: '#ED2939',
                                                       targetAxisIndex: 0,
                                                       labelInLegend: "contamination"},
                                                   1: {type: 'scatter', 
+                                                      //lineWidth: 0.5,
                                                       color: '#EEE117', 
                                                       targetAxisIndex: 1,
                                                       labelInLegend: "pct chimeras"},
-                                                  2: {type: 'line', 
-//                                                      lineWidth: 0.5,
-                                                      color: '#ED2939', 
-                                                      targetAxisIndex: 0,
-                                                      visibleInLegend: false},
-                                                  3: {type: 'line', 
-//                                                      lineWidth: 0.5,
-                                                      color: '#ED2939', 
-                                                      targetAxisIndex: 0,
-                                                      visibleInLegend: false},
-                                                  4: {type: 'line', 
-//                                                      lineWidth: 0.5,
-                                                      color: '#ED2939', 
-                                                      targetAxisIndex: 0,
-                                                      visibleInLegend: false},
-                                                  5: {type: 'line', 
-//                                                      lineWidth: 0.5,
-                                                      color: '#EEE117', 
-                                                      targetAxisIndex: 1,
-                                                      visibleInLegend: false},
-                                                  6: {type: 'line', 
-//                                                      lineWidth: 0.5,
-                                                      color: '#EEE117', 
-                                                      targetAxisIndex: 1,
-                                                      visibleInLegend: false},
-                                                  7: {type: 'line', 
-//                                                      lineWidth: 0.5,
-                                                      color: '#EEE117', 
-                                                      targetAxisIndex: 1,
-                                                      visibleInLegend: false},
                                           },
                                           vAxes: {
                                                   0: {title: 'contamination'},
@@ -790,81 +711,13 @@
                                                   slantedTextAngle: 45
                                           },
 //                                          pointsVisible: true,
-
                                   }
                           });
-                          chart1.setView({'columns': [0, 10, 9, 21, 22, 23, 24, 25, 26]});
+                          chart1.setView({'columns': [0, 10, 9]}); 
                           dashboard.bind(dropDown, chart1);
                           dashboard.draw(view);
                         }
                 });
-        }
-
-        function drawStuff() {
-           var data = new google.visualization.DataTable();
-           data.addColumn('string', 'Sample');
-           data.addColumn('number', 'mean_coverage');
-           data.addColumn('number', 'median_coverage');
-           data.addRows([
-               ['A', 3, 4],
-               ['A_F', 1, 5],
-               ['A_M', 1, 4],
-               ['B', 1, 1],
-               ['B_M', 2, 2]
-           ]);
-       
-           // Create a DataView that adds another column which is all the same (empty-string) to be able to aggregate on.
-           var viewWithKey = new google.visualization.DataView(data);
-           viewWithKey.setColumns([0, 1, 2, {
-               type: 'string',
-               label: '',
-               calc: function (d, r) {
-                   console.log(d.ng[1].label);
-                   return ''
-               }
-           }])
-       
-           // Aggregate the previous view to calculate the average. This table should be a single table that looks like:
-           // [['', AVERAGE]], so you can get the Average with .getValue(0,1)
-           var group = google.visualization.data.group(viewWithKey, [3], [{
-               column: 1,
-               id: 'avg',
-               label: 'average',
-               aggregation: google.visualization.data.avg,
-               'type': 'number'
-           }]);
-       
-           // Create a DataView where the third column is the average.
-           var dv = new google.visualization.DataView(data);
-           dv.setColumns([0, 1, 2, {
-               type: 'number',
-               label: 'average',
-               calc: function (dt, row) {
-                   return group.getValue(0, 1);
-               }
-           }]);
-       
-           // Set chart options
-           var options = {
-               'title': 'How Much Pizza I Ate Last Night',
-                   'width': 400,
-                   'height': 300,
-               seriesType: "bars",
-               series: {
-                   2: {
-                       type: "line",
-                       visibleInLegend: false
-                   }
-               },
-       
-               tooltip: {
-                   trigger: 'selection'
-               }
-           };
-       
-           // Instantiate and draw our chart, passing in some options.
-           var chart = new google.visualization.ComboChart(document.getElementById('chart_stuff'));
-           chart.draw(dv, options);
         }
 
     </script>
