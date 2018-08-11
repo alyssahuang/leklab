@@ -19,10 +19,18 @@ In general changes within large files can be found by searching 'alyssa' or ah22
 
 ## VAMP-seq data visualizations on RStudio ##
 Better documentation in progress!
-* [pten_in_rstudio.Rmd](https://github.com/alyssahuang/leklab/blob/master/pten_in_rstudio.Rmd)                                   -> File name is misnomer, graphs both PTEN and TPMT data. Created in RStudio. Data from [https://github.com/FowlerLab/VAMPseq](https://github.com/FowlerLab/VAMPseq).
+* [pten_in_rstudio.Rmd](https://github.com/alyssahuang/leklab/blob/master/pten_in_rstudio.Rmd)                                   -> File name is misnomer, graphs both PTEN and TPMT data. Created in RStudio. Requires data from [https://www.nature.com/articles/s41588-018-0122-z](https://www.nature.com/articles/s41588-018-0122-z) (Supplementary Datasets 1, 2) and [https://github.com/FowlerLab/VAMPseq](https://github.com/FowlerLab/VAMPseq) (PTEN/TPMT_positional_data.tsv).
 * [pten_in_rstudio.nb.html](https://github.com/alyssahuang/leklab/raw/master/pten_in_rstudio.nb.html)
 * [pten_tpmt_mean_heat.pdf](https://github.com/alyssahuang/leklab/blob/master/pten_tpmt_mean_heat.pdf)                               -> output pdf generated from Rmd file
 * [pten_tpmt_mean_heat_variance.pdf](https://github.com/alyssahuang/leklab/blob/master/pten_tpmt_mean_heat_variance.pdf)                      -> same as above, additional track
+
+## Deployment of Multitracks (Shiny app) ##
+[https://huangtya.shinyapps.io/track_attempt2/](https://huangtya.shinyapps.io/track_attempt2/)
+To zoom, click and drag over any region.
+To get back to default zoom, double click.
+To set up new deployment, follow these [notes]
+
+
 ## PyMOL 3D Visualizations ##
 PyMOL version 2.2.0, macOS, free student account
 [PyMOL download and setup](https://pymol.org/2/) 

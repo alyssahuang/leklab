@@ -1,0 +1,6 @@
+Highly recommend using RStudio to modify, create shiny applications for easy deployment.
+
+https://shiny.rstudio.com/articles/shinyapps.html
+
+Troubleshooting (after deployment):
+        - on shinyapps.io (your account) select application and go to Logs
